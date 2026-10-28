@@ -1,0 +1,207 @@
+{
+  "bookmarks" : [
+    {
+      "displayName" : "Vue 2025",
+      "id" : "e3000000000000000001"
+    }
+  ],
+  "extensionMeasures" : [
+
+  ],
+  "filters" : [
+    {
+      "kind" : "column",
+      "name" : "Année",
+      "role" : "filter",
+      "table" : "Calendrier"
+    }
+  ],
+  "format" : "pbir",
+  "pages" : [
+    {
+      "displayName" : "Synthèse",
+      "filters" : [
+
+      ],
+      "height" : 720,
+      "id" : "a1c3e5f7a9b1c3e5f7a9",
+      "order" : 0,
+      "visuals" : [
+        {
+          "fields" : [
+            {
+              "kind" : "measure",
+              "name" : "Total HT",
+              "role" : "Values",
+              "table" : "Ventes"
+            }
+          ],
+          "id" : "c1000000000000000001",
+          "position" : {
+            "height" : 120,
+            "width" : 280,
+            "x" : 20,
+            "y" : 20,
+            "z" : 0
+          },
+          "title" : "Chiffre d'affaires HT",
+          "type" : "card"
+        },
+        {
+          "fields" : [
+            {
+              "kind" : "measure",
+              "name" : "Quantité vendue",
+              "role" : "Values",
+              "table" : "Ventes"
+            }
+          ],
+          "id" : "c1000000000000000002",
+          "position" : {
+            "height" : 120,
+            "width" : 280,
+            "x" : 320,
+            "y" : 20,
+            "z" : 1000
+          },
+          "type" : "card"
+        },
+        {
+          "fields" : [
+            {
+              "kind" : "column",
+              "name" : "Année",
+              "role" : "Category",
+              "table" : "Calendrier"
+            },
+            {
+              "kind" : "measure",
+              "name" : "Total HT",
+              "role" : "Y",
+              "table" : "Ventes"
+            },
+            {
+              "kind" : "column",
+              "name" : "Année",
+              "role" : "sort",
+              "table" : "Calendrier"
+            }
+          ],
+          "id" : "c1000000000000000003",
+          "position" : {
+            "height" : 400,
+            "width" : 900,
+            "x" : 20,
+            "y" : 160,
+            "z" : 2000
+          },
+          "title" : "Évolution du CA",
+          "type" : "lineChart"
+        },
+        {
+          "fields" : [
+            {
+              "kind" : "column",
+              "name" : "Année",
+              "role" : "Values",
+              "table" : "Calendrier"
+            }
+          ],
+          "id" : "c1000000000000000004",
+          "position" : {
+            "height" : 400,
+            "width" : 300,
+            "x" : 940,
+            "y" : 160,
+            "z" : 3000
+          },
+          "type" : "slicer"
+        }
+      ],
+      "width" : 1280
+    },
+    {
+      "displayName" : "Détail produits",
+      "filters" : [
+        {
+          "kind" : "column",
+          "name" : "Catégorie",
+          "role" : "filter",
+          "table" : "Produits"
+        }
+      ],
+      "height" : 720,
+      "id" : "b2d4f6a8b0c2d4f6a8b0",
+      "order" : 1,
+      "visuals" : [
+        {
+          "fields" : [
+            {
+              "kind" : "column",
+              "name" : "Libellé",
+              "role" : "Values",
+              "table" : "Produits"
+            },
+            {
+              "kind" : "column",
+              "name" : "Quantité",
+              "role" : "Values",
+              "table" : "Ventes"
+            },
+            {
+              "kind" : "measure",
+              "name" : "Panier moyen",
+              "role" : "Values",
+              "table" : "Ventes"
+            }
+          ],
+          "id" : "d2000000000000000001",
+          "position" : {
+            "height" : 600,
+            "width" : 600,
+            "x" : 20,
+            "y" : 20,
+            "z" : 0
+          },
+          "title" : "Ventes par produit",
+          "type" : "tableEx"
+        },
+        {
+          "fields" : [
+            {
+              "hierarchy" : "Gamme",
+              "kind" : "hierarchyLevel",
+              "name" : "Catégorie",
+              "role" : "Category",
+              "table" : "Produits"
+            },
+            {
+              "kind" : "measure",
+              "name" : "Marge %",
+              "role" : "Y",
+              "table" : "Ventes"
+            },
+            {
+              "kind" : "column",
+              "name" : "Catégorie",
+              "role" : "filter",
+              "table" : "Produits"
+            }
+          ],
+          "id" : "d2000000000000000002",
+          "position" : {
+            "height" : 600,
+            "width" : 600,
+            "x" : 640,
+            "y" : 20,
+            "z" : 1000
+          },
+          "title" : "Marge par catégorie",
+          "type" : "clusteredBarChart"
+        }
+      ],
+      "width" : 1280
+    }
+  ],
+  "themeName" : "CY24SU10"
+}

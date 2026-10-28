@@ -1,0 +1,25 @@
+{
+  "diagnostics" : [
+    {
+      "code" : "report.conflictingFormats",
+      "file" : "Conflit.Report",
+      "message" : "Report folder contains both report.json (PBIR-Legacy) and definition/ (PBIR); reading definition/.",
+      "severity" : "error"
+    },
+    {
+      "code" : "model.conflictingFormats",
+      "file" : "Conflit.SemanticModel",
+      "message" : "Semantic model folder contains both model.bim (TMSL) and definition/ (TMDL); reading definition/.",
+      "severity" : "error"
+    },
+    {
+      "code" : "model.unusedMeasure",
+      "file" : "Conflit.SemanticModel",
+      "message" : "Measure Ventes[Total HT N-1] is not used by this report: no visual or filter reaches it, directly or through another measure.",
+      "severity" : "info"
+    }
+  ],
+  "errors" : 2,
+  "infos" : 1,
+  "warnings" : 0
+}

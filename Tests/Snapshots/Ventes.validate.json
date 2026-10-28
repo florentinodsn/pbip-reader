@@ -1,0 +1,13 @@
+{
+  "diagnostics" : [
+    {
+      "code" : "model.unusedMeasure",
+      "file" : "Ventes.SemanticModel",
+      "message" : "Measure Ventes[Total HT N-1] is not used by this report: no visual or filter reaches it, directly or through another measure.",
+      "severity" : "info"
+    }
+  ],
+  "errors" : 0,
+  "infos" : 1,
+  "warnings" : 0
+}

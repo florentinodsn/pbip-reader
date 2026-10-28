@@ -1,0 +1,63 @@
+{
+  "diagnostics" : [
+    {
+      "code" : "report.unknownField",
+      "file" : "RefCassee.Report/definition/pages/p0000000000000000001/visuals/v0000000000000000001/visual.json",
+      "message" : "Page 'Page 1', tableEx v0000000000000000001: measure Ventes[Total TTC] does not exist in the semantic model.",
+      "severity" : "error"
+    },
+    {
+      "code" : "report.unknownTable",
+      "file" : "RefCassee.Report/definition/pages/p0000000000000000001/visuals/v0000000000000000001/visual.json",
+      "message" : "Page 'Page 1', tableEx v0000000000000000001: column Clients[Nom] refers to unknown table 'Clients'.",
+      "severity" : "error"
+    },
+    {
+      "code" : "model.brokenRelationship",
+      "file" : "RefCassee.SemanticModel",
+      "message" : "Relationship r1 (Ventes[Code Client] → Clients[Code]) refers to unknown column Ventes[Code Client].",
+      "severity" : "error"
+    },
+    {
+      "code" : "model.brokenRelationship",
+      "file" : "RefCassee.SemanticModel",
+      "message" : "Relationship r1 (Ventes[Code Client] → Clients[Code]) refers to unknown table 'Clients'.",
+      "severity" : "error"
+    },
+    {
+      "code" : "report.kindMismatch",
+      "file" : "RefCassee.Report/definition/pages/p0000000000000000001/visuals/v0000000000000000001/visual.json",
+      "message" : "Page 'Page 1', tableEx v0000000000000000001: Ventes[Date] is used as a measure but the model defines it as a column.",
+      "severity" : "warning"
+    },
+    {
+      "code" : "schema.unknownVersion",
+      "file" : "RefCassee.Report/definition/report.json",
+      "message" : "Schema item/report/definition/report version 9.0.0 is newer than the known major version 3; reading anyway.",
+      "severity" : "warning"
+    },
+    {
+      "code" : "tmdl.unknownKeyword",
+      "file" : "RefCassee.SemanticModel/definition/tables/Ventes.tmdl",
+      "line" : 15,
+      "message" : "Unknown keyword 'gadget'; kept as a generic object.",
+      "severity" : "warning"
+    },
+    {
+      "code" : "model.unusedMeasure",
+      "file" : "RefCassee.SemanticModel",
+      "message" : "Measure Ventes[Total orphelin] is not used by this report: no visual or filter reaches it, directly or through another measure.",
+      "severity" : "info"
+    },
+    {
+      "code" : "tmdl.refWithoutObject",
+      "file" : "RefCassee.SemanticModel/definition/model.tmdl",
+      "line" : 5,
+      "message" : "ref table 'Absente' has no matching table definition; ignored.",
+      "severity" : "info"
+    }
+  ],
+  "errors" : 4,
+  "infos" : 2,
+  "warnings" : 3
+}

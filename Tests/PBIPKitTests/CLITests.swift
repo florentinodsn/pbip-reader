@@ -42,11 +42,13 @@ final class CLITests: XCTestCase {
 
     func testUnknownPathFails() throws {
         let (status, output) = try run(["info", "/nonexistent/x.pbip"])
-        XCTAssertNotEqual(status, 0)
+        XCTAssertEqual(status, 2)
+        XCTAssertFalse(output.contains("Usage"), output)
         XCTAssertTrue(output.contains("No such file"), output)
     }
 
     func testLineageForAMissingNameFails() throws {
-        XCTAssertNotEqual(try run(["lineage", Fixtures.url("Ventes").path, "--measure", "Nope"]).status, 0)
+        XCTAssertEqual(try run(["lineage", Fixtures.url("Ventes").path, "--measure", "Nope"]).status, 2)
+        XCTAssertEqual(try run(["model", Fixtures.url("Publie").path]).status, 2)
     }
 }

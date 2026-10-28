@@ -1,0 +1,544 @@
+{
+  "entries" : [
+    {
+      "exists" : true,
+      "kind" : "measure",
+      "name" : "Total HT",
+      "referencedBy" : [
+        "Ventes[Panier moyen]",
+        "Ventes[Total HT N-1]",
+        "Ventes[Marge %]"
+      ],
+      "references" : [
+        "Ventes[Montant HT]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000001",
+          "visualTitle" : "Chiffre d'affaires HT",
+          "visualType" : "card"
+        },
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "Y",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000003",
+          "visualTitle" : "Évolution du CA",
+          "visualType" : "lineChart"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "measure",
+      "name" : "Quantité vendue",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+        "Ventes[Quantité]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000002",
+          "visualType" : "card"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "measure",
+      "name" : "Panier moyen",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+        "Ventes[Date]",
+        "Ventes[Total HT]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000001",
+          "visualTitle" : "Ventes par produit",
+          "visualType" : "tableEx"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "measure",
+      "name" : "Total HT N-1",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+        "Ventes[Total HT]",
+        "Calendrier[Date]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "measure",
+      "name" : "Marge %",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+        "Ventes[Total HT]",
+        "Ventes[Quantité]",
+        "Ventes[Prix unitaire]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "Y",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000002",
+          "visualTitle" : "Marge par catégorie",
+          "visualType" : "clusteredBarChart"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Date",
+      "referencedBy" : [
+        "Ventes[Panier moyen]"
+      ],
+      "references" : [
+
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Code Produit",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Quantité",
+      "referencedBy" : [
+        "Ventes[Quantité vendue]",
+        "Ventes[Marge %]",
+        "Ventes[Montant HT]"
+      ],
+      "references" : [
+
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000001",
+          "visualTitle" : "Ventes par produit",
+          "visualType" : "tableEx"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Prix unitaire",
+      "referencedBy" : [
+        "Ventes[Marge %]",
+        "Ventes[Montant HT]"
+      ],
+      "references" : [
+
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Montant HT",
+      "referencedBy" : [
+        "Ventes[Total HT]"
+      ],
+      "references" : [
+        "Ventes[Quantité]",
+        "Ventes[Prix unitaire]"
+      ],
+      "table" : "Ventes",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Code Produit",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+
+      ],
+      "table" : "Produits",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Libellé",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+
+      ],
+      "table" : "Produits",
+      "usedBy" : [
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000001",
+          "visualTitle" : "Ventes par produit",
+          "visualType" : "tableEx"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Catégorie",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+
+      ],
+      "table" : "Produits",
+      "usedBy" : [
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "filter",
+          "scope" : "page"
+        },
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "Category",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000002",
+          "visualTitle" : "Marge par catégorie",
+          "visualType" : "clusteredBarChart"
+        },
+        {
+          "page" : "Détail produits",
+          "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+          "role" : "filter",
+          "scope" : "visual",
+          "visualId" : "d2000000000000000002",
+          "visualTitle" : "Marge par catégorie",
+          "visualType" : "clusteredBarChart"
+        }
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Date",
+      "referencedBy" : [
+        "Ventes[Total HT N-1]"
+      ],
+      "references" : [
+
+      ],
+      "table" : "Calendrier",
+      "usedBy" : [
+
+      ]
+    },
+    {
+      "exists" : true,
+      "kind" : "column",
+      "name" : "Année",
+      "referencedBy" : [
+
+      ],
+      "references" : [
+
+      ],
+      "table" : "Calendrier",
+      "usedBy" : [
+        {
+          "role" : "filter",
+          "scope" : "report"
+        },
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "Category",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000003",
+          "visualTitle" : "Évolution du CA",
+          "visualType" : "lineChart"
+        },
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "sort",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000003",
+          "visualTitle" : "Évolution du CA",
+          "visualType" : "lineChart"
+        },
+        {
+          "page" : "Synthèse",
+          "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+          "role" : "Values",
+          "scope" : "visual",
+          "visualId" : "c1000000000000000004",
+          "visualType" : "slicer"
+        }
+      ]
+    }
+  ],
+  "filters" : [
+    {
+      "field" : {
+        "kind" : "column",
+        "name" : "Année",
+        "role" : "filter",
+        "table" : "Calendrier"
+      },
+      "status" : "ok",
+      "target" : "Calendrier[Année]"
+    },
+    {
+      "field" : {
+        "kind" : "column",
+        "name" : "Catégorie",
+        "role" : "filter",
+        "table" : "Produits"
+      },
+      "status" : "ok",
+      "target" : "Produits[Catégorie]"
+    }
+  ],
+  "visuals" : [
+    {
+      "fields" : [
+        {
+          "field" : {
+            "kind" : "measure",
+            "name" : "Total HT",
+            "role" : "Values",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Total HT]"
+        }
+      ],
+      "page" : "Synthèse",
+      "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+      "visualId" : "c1000000000000000001",
+      "visualTitle" : "Chiffre d'affaires HT",
+      "visualType" : "card"
+    },
+    {
+      "fields" : [
+        {
+          "field" : {
+            "kind" : "measure",
+            "name" : "Quantité vendue",
+            "role" : "Values",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Quantité vendue]"
+        }
+      ],
+      "page" : "Synthèse",
+      "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+      "visualId" : "c1000000000000000002",
+      "visualType" : "card"
+    },
+    {
+      "fields" : [
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Année",
+            "role" : "Category",
+            "table" : "Calendrier"
+          },
+          "status" : "ok",
+          "target" : "Calendrier[Année]"
+        },
+        {
+          "field" : {
+            "kind" : "measure",
+            "name" : "Total HT",
+            "role" : "Y",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Total HT]"
+        },
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Année",
+            "role" : "sort",
+            "table" : "Calendrier"
+          },
+          "status" : "ok",
+          "target" : "Calendrier[Année]"
+        }
+      ],
+      "page" : "Synthèse",
+      "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+      "visualId" : "c1000000000000000003",
+      "visualTitle" : "Évolution du CA",
+      "visualType" : "lineChart"
+    },
+    {
+      "fields" : [
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Année",
+            "role" : "Values",
+            "table" : "Calendrier"
+          },
+          "status" : "ok",
+          "target" : "Calendrier[Année]"
+        }
+      ],
+      "page" : "Synthèse",
+      "pageId" : "a1c3e5f7a9b1c3e5f7a9",
+      "visualId" : "c1000000000000000004",
+      "visualType" : "slicer"
+    },
+    {
+      "fields" : [
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Libellé",
+            "role" : "Values",
+            "table" : "Produits"
+          },
+          "status" : "ok",
+          "target" : "Produits[Libellé]"
+        },
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Quantité",
+            "role" : "Values",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Quantité]"
+        },
+        {
+          "field" : {
+            "kind" : "measure",
+            "name" : "Panier moyen",
+            "role" : "Values",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Panier moyen]"
+        }
+      ],
+      "page" : "Détail produits",
+      "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+      "visualId" : "d2000000000000000001",
+      "visualTitle" : "Ventes par produit",
+      "visualType" : "tableEx"
+    },
+    {
+      "fields" : [
+        {
+          "field" : {
+            "hierarchy" : "Gamme",
+            "kind" : "hierarchyLevel",
+            "name" : "Catégorie",
+            "role" : "Category",
+            "table" : "Produits"
+          },
+          "status" : "ok",
+          "target" : "Produits[Catégorie]"
+        },
+        {
+          "field" : {
+            "kind" : "measure",
+            "name" : "Marge %",
+            "role" : "Y",
+            "table" : "Ventes"
+          },
+          "status" : "ok",
+          "target" : "Ventes[Marge %]"
+        },
+        {
+          "field" : {
+            "kind" : "column",
+            "name" : "Catégorie",
+            "role" : "filter",
+            "table" : "Produits"
+          },
+          "status" : "ok",
+          "target" : "Produits[Catégorie]"
+        }
+      ],
+      "page" : "Détail produits",
+      "pageId" : "b2d4f6a8b0c2d4f6a8b0",
+      "visualId" : "d2000000000000000002",
+      "visualTitle" : "Marge par catégorie",
+      "visualType" : "clusteredBarChart"
+    }
+  ]
+}

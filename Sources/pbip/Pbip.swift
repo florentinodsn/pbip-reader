@@ -35,7 +35,7 @@ struct CommonOptions: ParsableArguments {
         do {
             return try ProjectLoader().load(URL(fileURLWithPath: path))
         } catch let error as ProjectLoaderError {
-            throw ValidationError(error.description)
+            throw fail(error.description)
         }
     }
 }
@@ -58,6 +58,12 @@ struct OutputFormatArgument: ExpressibleByArgument {
 
 func write(_ text: String) {
     FileHandle.standardOutput.write(Data(text.utf8))
+}
+
+/// Échec sans rappel de l'usage. Codes de sortie : 0 succès, 1 erreurs de validation, 2 lecture impossible.
+func fail(_ message: String) -> ExitCode {
+    FileHandle.standardError.write(Data("Error: \(message)\n".utf8))
+    return ExitCode(2)
 }
 
 struct Info: ParsableCommand {
@@ -84,12 +90,12 @@ struct Model: ParsableCommand {
     func run() throws {
         let project = try options.loadProject()
         guard let model = project.semanticModel else {
-            throw ValidationError(project.datasetReference?.kind == .byConnection
+            throw fail(project.datasetReference?.kind == .byConnection
                 ? "The report uses a published semantic model; no local model to show."
                 : "No readable semantic model in this project. Run 'pbip validate' for details.")
         }
         guard let filtered = ModelRenderer.filter(model, table: table) else {
-            throw ValidationError("No table named '\(table ?? "")'. Tables: \(model.tables.map(\.name).joined(separator: ", "))")
+            throw fail("No table named '\(table ?? "")'. Tables: \(model.tables.map(\.name).joined(separator: ", "))")
         }
         write(ModelRenderer(style: options.style).render(filtered, format: options.outputFormat))
     }
@@ -108,10 +114,10 @@ struct ReportCommand: ParsableCommand {
     func run() throws {
         let project = try options.loadProject()
         guard let report = project.report else {
-            throw ValidationError("No readable report in this project. Run 'pbip validate' for details.")
+            throw fail("No readable report in this project. Run 'pbip validate' for details.")
         }
         guard let filtered = ReportRenderer.filter(report, page: page) else {
-            throw ValidationError("No page named '\(page ?? "")'. Pages: \(report.pages.map(\.displayName).joined(separator: ", "))")
+            throw fail("No page named '\(page ?? "")'. Pages: \(report.pages.map(\.displayName).joined(separator: ", "))")
         }
         write(ReportRenderer(style: options.style).render(filtered, format: options.outputFormat))
     }
@@ -131,7 +137,7 @@ struct LineageCommand: ParsableCommand {
         let project = try options.loadProject()
         let lineage = LineageBuilder.build(project)
         guard let filtered = LineageRenderer.filter(lineage, name: measure) else {
-            throw ValidationError("No measure or column named '\(measure ?? "")'.")
+            throw fail("No measure or column named '\(measure ?? "")'.")
         }
         write(LineageRenderer(style: options.style).render(filtered, format: options.outputFormat))
     }

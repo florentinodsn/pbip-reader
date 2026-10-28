@@ -1,0 +1,246 @@
+{
+  "compatibilityLevel" : 1567,
+  "culture" : "fr-FR",
+  "cultures" : [
+    "fr-FR"
+  ],
+  "expressions" : [
+    {
+      "expression" : "\"/exemple/donnees\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+      "isParameter" : true,
+      "kind" : "m",
+      "name" : "Dossier source"
+    }
+  ],
+  "format" : "tmdl",
+  "perspectives" : [
+
+  ],
+  "relationships" : [
+    {
+      "crossFilteringBehavior" : "bothDirections",
+      "from" : {
+        "column" : "Code Produit",
+        "table" : "Ventes"
+      },
+      "fromCardinality" : "many",
+      "id" : "7a3c1e52-0000-4000-8000-000000000001",
+      "isActive" : true,
+      "to" : {
+        "column" : "Code Produit",
+        "table" : "Produits"
+      },
+      "toCardinality" : "one"
+    },
+    {
+      "crossFilteringBehavior" : "oneDirection",
+      "from" : {
+        "column" : "Date",
+        "table" : "Ventes"
+      },
+      "fromCardinality" : "many",
+      "id" : "7a3c1e52-0000-4000-8000-000000000002",
+      "isActive" : true,
+      "to" : {
+        "column" : "Date",
+        "table" : "Calendrier"
+      },
+      "toCardinality" : "one"
+    }
+  ],
+  "roles" : [
+    {
+      "modelPermission" : "read",
+      "name" : "Lecteurs France",
+      "tablePermissions" : [
+        {
+          "filterExpression" : "Produits[Catégorie] <> \"Interne\"",
+          "table" : "Produits"
+        }
+      ]
+    }
+  ],
+  "tables" : [
+    {
+      "calculationItems" : [
+
+      ],
+      "columns" : [
+        {
+          "dataType" : "dateTime",
+          "formatString" : "General Date",
+          "isHidden" : false,
+          "name" : "Date",
+          "sourceColumn" : "Date"
+        },
+        {
+          "dataType" : "string",
+          "isHidden" : false,
+          "name" : "Code Produit",
+          "sourceColumn" : "Code Produit"
+        },
+        {
+          "dataType" : "int64",
+          "formatString" : "0",
+          "isHidden" : false,
+          "name" : "Quantité",
+          "sourceColumn" : "Quantité"
+        },
+        {
+          "dataType" : "decimal",
+          "formatString" : "0.00 \"€\"",
+          "isHidden" : false,
+          "name" : "Prix unitaire",
+          "sourceColumn" : "Prix unitaire"
+        },
+        {
+          "dataType" : "decimal",
+          "expression" : "Ventes[Quantité] * Ventes[Prix unitaire]",
+          "formatString" : "#,##0.00 €",
+          "isHidden" : true,
+          "name" : "Montant HT"
+        }
+      ],
+      "description" : "Lignes de vente fictives.",
+      "hierarchies" : [
+
+      ],
+      "isHidden" : false,
+      "measures" : [
+        {
+          "description" : "Chiffre d'affaires hors taxes.",
+          "expression" : "SUM(Ventes[Montant HT])",
+          "formatString" : "#,##0.00 €",
+          "isHidden" : false,
+          "name" : "Total HT"
+        },
+        {
+          "expression" : "SUM(Ventes[Quantité])",
+          "formatString" : "0",
+          "isHidden" : false,
+          "name" : "Quantité vendue"
+        },
+        {
+          "displayFolder" : "Indicateurs",
+          "expression" : "VAR nb = DISTINCTCOUNT(Ventes[Date])\nRETURN\n\tDIVIDE([Total HT], nb)",
+          "formatString" : "#,##0.00 €",
+          "isHidden" : false,
+          "name" : "Panier moyen"
+        },
+        {
+          "expression" : "CALCULATE(\n\t[Total HT],\n\tSAMEPERIODLASTYEAR('Calendrier'[Date])\n)",
+          "formatString" : "#,##0.00 €",
+          "isHidden" : false,
+          "name" : "Total HT N-1"
+        },
+        {
+          "description" : "Marge estimée, coût fictif à 60 % du prix.\nSert d'exemple de description sur deux lignes.",
+          "displayFolder" : "Indicateurs",
+          "expression" : "DIVIDE([Total HT] - SUMX(Ventes, Ventes[Quantité] * Ventes[Prix unitaire] * 0.6), [Total HT])",
+          "formatString" : "0.0 %",
+          "isHidden" : false,
+          "name" : "Marge %"
+        }
+      ],
+      "name" : "Ventes",
+      "partitions" : [
+        {
+          "expression" : "let\n\tSource = Csv.Document(File.Contents(#\"Dossier source\" & \"/ventes.csv\"), [Delimiter=\";\", Encoding=65001]),\n\tTypé = Table.TransformColumnTypes(Source, {{\"Quantité\", Int64.Type}})\nin\n\tTypé",
+          "mode" : "import",
+          "name" : "Ventes",
+          "sourceKind" : "m"
+        }
+      ]
+    },
+    {
+      "calculationItems" : [
+
+      ],
+      "columns" : [
+        {
+          "dataType" : "string",
+          "isHidden" : false,
+          "name" : "Code Produit",
+          "sourceColumn" : "Code Produit"
+        },
+        {
+          "dataType" : "string",
+          "isHidden" : false,
+          "name" : "Libellé",
+          "sourceColumn" : "Libellé"
+        },
+        {
+          "dataType" : "string",
+          "isHidden" : false,
+          "name" : "Catégorie",
+          "sourceColumn" : "Catégorie"
+        }
+      ],
+      "hierarchies" : [
+        {
+          "levels" : [
+            {
+              "column" : "Catégorie",
+              "name" : "Catégorie"
+            },
+            {
+              "column" : "Libellé",
+              "name" : "Libellé"
+            }
+          ],
+          "name" : "Gamme"
+        }
+      ],
+      "isHidden" : false,
+      "measures" : [
+
+      ],
+      "name" : "Produits",
+      "partitions" : [
+        {
+          "expression" : "let\n\tSource = Csv.Document(File.Contents(#\"Dossier source\" & \"/produits.csv\"), [Delimiter=\";\", Encoding=65001])\nin\n\tSource",
+          "mode" : "import",
+          "name" : "Produits",
+          "sourceKind" : "m"
+        }
+      ]
+    },
+    {
+      "calculationItems" : [
+
+      ],
+      "columns" : [
+        {
+          "dataType" : "dateTime",
+          "formatString" : "General Date",
+          "isHidden" : false,
+          "name" : "Date",
+          "sourceColumn" : "[Date]"
+        },
+        {
+          "dataType" : "int64",
+          "formatString" : "0",
+          "isHidden" : false,
+          "name" : "Année",
+          "sourceColumn" : "[Année]"
+        }
+      ],
+      "hierarchies" : [
+
+      ],
+      "isHidden" : false,
+      "measures" : [
+
+      ],
+      "name" : "Calendrier",
+      "partitions" : [
+        {
+          "expression" : "ADDCOLUMNS(\n\tCALENDAR(DATE(2024, 1, 1), DATE(2025, 12, 31)),\n\t\"Année\", YEAR([Date])\n)",
+          "mode" : "import",
+          "name" : "Calendrier",
+          "sourceKind" : "calculated"
+        }
+      ]
+    }
+  ]
+}

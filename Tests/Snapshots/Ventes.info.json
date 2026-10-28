@@ -1,0 +1,29 @@
+{
+  "compatibilityLevel" : 1567,
+  "counts" : {
+    "bookmarks" : 1,
+    "columns" : 10,
+    "expressions" : 1,
+    "measures" : 5,
+    "pages" : 2,
+    "relationships" : 2,
+    "roles" : 1,
+    "tables" : 3,
+    "visuals" : 6
+  },
+  "culture" : "fr-FR",
+  "datasetReference" : {
+    "kind" : "byPath",
+    "path" : "../Ventes.SemanticModel"
+  },
+  "diagnostics" : {
+    "errors" : 0,
+    "infos" : 0,
+    "warnings" : 0
+  },
+  "name" : "Ventes",
+  "reportFormat" : "pbir",
+  "reportPath" : "Ventes.Report",
+  "semanticModelFormat" : "tmdl",
+  "semanticModelPath" : "Ventes.SemanticModel"
+}

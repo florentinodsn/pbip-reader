@@ -45,6 +45,9 @@ Options communes : --format text|json|markdown, --no-color
 Le chemin peut être un fichier `.pbip`, un dossier contenant un `.pbip`, un dossier `.Report`
 ou un dossier `.SemanticModel`.
 
+Codes de sortie : `0` succès, `1` erreurs de validation (`pbip validate`), `2` projet illisible,
+`64` option invalide.
+
 `pbip validate` est conçu pour la CI :
 
 ```yaml

@@ -1,0 +1,13 @@
+{
+  "diagnostics" : [
+    {
+      "code" : "report.modelNotLocal",
+      "file" : "Publie.Report/definition.pbir",
+      "message" : "Report is connected to a published semantic model (Modèle Exemple); only the report is read.",
+      "severity" : "info"
+    }
+  ],
+  "errors" : 0,
+  "infos" : 1,
+  "warnings" : 0
+}
