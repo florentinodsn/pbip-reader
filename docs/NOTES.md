@@ -173,6 +173,8 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
   Une version majeure supérieure produit un avertissement, pas une erreur.
 - **Dossier `.Dataset`.** Les anciens projets nomment le dossier du modèle `<Nom>.Dataset`. Le
   `byPath` est suivi quel que soit le suffixe.
+- **`definition.pbidataset`.** Ces mêmes anciens dossiers `.Dataset` contiennent `definition.pbidataset`
+  au lieu de `definition.pbism` (absent de la doc actuelle). Il est accepté, avec un diagnostic `info`.
 - **`functions.tmdl` (UDF DAX)** : listé par la doc ; lu comme nœud `function`, non exposé dans
   le modèle objet pour l'instant.
 - **Nom du modèle publié** : la doc montre deux formes de chaîne de connexion ; l'extraction de

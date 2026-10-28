@@ -20,7 +20,7 @@ public struct Style: Sendable {
     func cyan(_ s: String) -> String { wrap(s, "36") }
     func green(_ s: String) -> String { wrap(s, "32") }
 
-    func severity(_ severity: Diagnostic.Severity) -> String {
+    public func severity(_ severity: Diagnostic.Severity) -> String {
         let label = severity.rawValue.padding(toLength: 7, withPad: " ", startingAt: 0)
         switch severity {
         case .error: return red(label)

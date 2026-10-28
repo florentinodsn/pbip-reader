@@ -36,8 +36,13 @@ struct SemanticModelReader {
 
     func read(_ folder: URL) -> SemanticModel? {
         let pbism = folder.appendingPathComponent("definition.pbism")
+        // Les premiers projets (dossiers `.Dataset`) nommaient ce fichier `definition.pbidataset`.
+        let pbidataset = folder.appendingPathComponent("definition.pbidataset")
         if FileReader.exists(pbism) {
             _ = reader.readJSON(pbism)
+        } else if FileReader.exists(pbidataset) {
+            _ = reader.readJSON(pbidataset)
+            sink.info("pbism.legacyName", "Semantic model uses the older definition.pbidataset file name.", url: pbidataset)
         } else {
             sink.error("pbism.missing", "Semantic model folder has no definition.pbism.", url: folder)
         }

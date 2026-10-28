@@ -8,7 +8,7 @@ struct Pbip: ParsableCommand {
         commandName: "pbip",
         abstract: "Read-only explorer for PBIP projects (report + semantic model).",
         version: PBIPKit.version,
-        subcommands: [Info.self]
+        subcommands: [Info.self, Validate.self]
     )
 }
 
@@ -69,5 +69,22 @@ struct Info: ParsableCommand {
     func run() throws {
         let project = try options.loadProject()
         write(InfoRenderer(style: options.style).render(project, format: options.outputFormat))
+    }
+}
+
+struct Validate: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        abstract: "Diagnostics: broken references, unknown fields, conflicting formats, unused measures.")
+
+    @OptionGroup var options: CommonOptions
+
+    func run() throws {
+        let project = try options.loadProject()
+        let style = options.style
+        for d in project.diagnostics.sortedForOutput() {
+            let location = [d.file, d.line.map(String.init)].compactMap { $0 }.joined(separator: ":")
+            write("\(style.severity(d.severity))  \(d.code)  \(location)  \(d.message)\n")
+        }
+        if project.diagnostics.hasErrors { throw ExitCode(1) }
     }
 }

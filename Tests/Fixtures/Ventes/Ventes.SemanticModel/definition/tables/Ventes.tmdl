@@ -72,10 +72,10 @@ table Ventes
 	partition Ventes = m
 		mode: import
 		source =
-			let
-				Source = Csv.Document(File.Contents(#"Dossier source" & "/ventes.csv"), [Delimiter=";", Encoding=65001]),
-				Typé = Table.TransformColumnTypes(Source, {{"Quantité", Int64.Type}})
-			in
-				Typé
+				let
+					Source = Csv.Document(File.Contents(#"Dossier source" & "/ventes.csv"), [Delimiter=";", Encoding=65001]),
+					Typé = Table.TransformColumnTypes(Source, {{"Quantité", Int64.Type}})
+				in
+					Typé
 
 	annotation PBI_ResultType = Table

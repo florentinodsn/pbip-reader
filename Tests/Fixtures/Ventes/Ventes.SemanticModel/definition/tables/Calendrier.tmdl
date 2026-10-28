@@ -20,9 +20,9 @@ table Calendrier
 	partition Calendrier = calculated
 		mode: import
 		source =
-			ADDCOLUMNS(
-				CALENDAR(DATE(2024, 1, 1), DATE(2025, 12, 31)),
-				"Année", YEAR([Date])
-			)
+				ADDCOLUMNS(
+					CALENDAR(DATE(2024, 1, 1), DATE(2025, 12, 31)),
+					"Année", YEAR([Date])
+				)
 
 	annotation PBI_Id = 0f0f0f0f000040008000000000000001
