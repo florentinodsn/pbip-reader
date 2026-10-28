@@ -86,7 +86,6 @@ Dans `Sources/PBIPKit/` :
 
 ## Points ouverts
 
-- Titulaire de la licence : `florentinodsn` par défaut, nom complet possible.
 - Fonctions DAX : forme TMSL (`model.functions`) supposée, à confirmer ; références des fonctions
   absentes du lignage.
 - Message `model.unusedMeasure` bruyant sur un modèle partagé par plusieurs rapports (relatif au rapport lu).
