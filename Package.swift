@@ -7,6 +7,7 @@ let package = Package(
     products: [
         .library(name: "PBIPKit", targets: ["PBIPKit"]),
         .executable(name: "pbip", targets: ["pbip"]),
+        .executable(name: "pbip-reader-app", targets: ["PBIPReaderApp"]),
     ],
     dependencies: [
         // Seule dépendance externe autorisée (voir docs/NOTES.md).
@@ -20,6 +21,11 @@ let package = Package(
                 "PBIPKit",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
+        ),
+        // Application SwiftUI (phase 4) : seule cible qui dépend de l'interface.
+        .executableTarget(
+            name: "PBIPReaderApp",
+            dependencies: ["PBIPKit"]
         ),
         .testTarget(
             name: "PBIPKitTests",

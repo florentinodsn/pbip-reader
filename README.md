@@ -54,6 +54,21 @@ Codes de sortie : `0` succès, `1` erreurs de validation (`pbip validate`), `2` 
 - run: pbip validate MonRapport.pbip --format markdown >> "$GITHUB_STEP_SUMMARY"
 ```
 
+## Application macOS
+
+Une application SwiftUI en lecture seule accompagne la CLI : barre latérale *Modèle / Rapport /
+Diagnostics*, détail des tables et des mesures (DAX coloré, usages dans le rapport), requêtes M,
+relations, et aperçu schématique de chaque page à partir des positions des visuels.
+
+```bash
+swift run pbip-reader-app -project chemin/vers/MonRapport.pbip   # lancement direct
+Scripts/make-app.sh                                              # construit « PBIP Reader.app »
+```
+
+Dans l'application : `⌘O` ouvre un projet (fichier `.pbip` ou dossier), `⌘R` le relit ; on peut
+aussi déposer le fichier dans la fenêtre. Le chemin se passe avec `-project` : un chemin seul
+serait pris par macOS pour un document à ouvrir.
+
 ## Bibliothèque
 
 `PBIPKit` est utilisable seule, sans dépendance d'interface :

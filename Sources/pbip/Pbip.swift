@@ -7,7 +7,7 @@ struct Pbip: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "pbip",
         abstract: "Read-only explorer for PBIP projects (report + semantic model).",
-        version: PBIPKit.version,
+        version: PBIPKitVersion.current,
         subcommands: [Info.self, Model.self, ReportCommand.self, LineageCommand.self, Validate.self]
     )
 }

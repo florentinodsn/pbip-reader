@@ -187,3 +187,13 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
 - **Écart avec le prompt (contrainte « salle blanche »)** : en plus des fichiers fictifs, la
   robustesse du parseur a été vérifiée **localement** sur des projets internes de l'auteur,
   enregistrés par Desktop. Rien n'en est copié dans ce dépôt (ni noms, ni données, ni structure).
+
+## 7. Application (phase 4)
+
+- Cible `PBIPReaderApp` séparée ; `PBIPKit` reste sans dépendance d'interface (la coloration DAX/M
+  est un découpage en jetons dans `PBIPKit`, les couleurs sont dans l'application).
+- Exécutable SwiftPM sans bundle : la politique d'activation `.regular` est posée dans
+  `applicationWillFinishLaunching`.
+- Le projet à ouvrir au lancement se passe avec `-project <chemin>` (lu dans `UserDefaults`). Un
+  chemin passé seul est interprété par AppKit comme un document à ouvrir, et SwiftUI ne crée alors
+  pas la fenêtre initiale (constaté à l'usage).
