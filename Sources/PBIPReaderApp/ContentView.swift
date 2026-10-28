@@ -83,17 +83,33 @@ struct Sidebar: View {
 
     var body: some View {
         List(selection: $model.selection) {
-            if let semantic = model.project?.semanticModel {
-                Section("Modèle") {
+            if model.visibleModel != nil || model.project?.report != nil {
+                Section("Vue d'ensemble") {
+                    if let semantic = model.visibleModel {
+                        Label("Modèle", systemImage: "point.3.connected.trianglepath.dotted")
+                            .tag(SidebarItem.diagram)
+                        Label("Mesures", systemImage: "sum")
+                            .badge(semantic.measureCount)
+                            .tag(SidebarItem.measures)
+                        Label("Relations", systemImage: "arrow.triangle.branch")
+                            .badge(semantic.relationships.count)
+                            .tag(SidebarItem.relationships)
+                    }
+                    if let report = model.project?.report {
+                        Label("Pages et visuels", systemImage: "rectangle.stack")
+                            .badge(report.visualCount)
+                            .tag(SidebarItem.pagesOverview)
+                    }
+                }
+            }
+            if let semantic = model.visibleModel {
+                Section("Tables") {
                     ForEach(semantic.tables, id: \.name) { table in
                         Label(table.name, systemImage: table.calculationItems.isEmpty ? "tablecells" : "function")
                             .foregroundStyle(table.isHidden ? .secondary : .primary)
                             .badge(table.measures.count)
                             .tag(SidebarItem.table(table.name))
                     }
-                    Label("Relations", systemImage: "arrow.triangle.branch")
-                        .badge(semantic.relationships.count)
-                        .tag(SidebarItem.relationships)
                     if !semantic.expressions.isEmpty {
                         Label("Requêtes M", systemImage: "curlybraces")
                             .badge(semantic.expressions.count)
@@ -141,12 +157,24 @@ struct Detail: View {
 
     var body: some View {
         switch item {
+        case .diagram?:
+            if let semantic = model.visibleModel {
+                ModelDiagramView(semantic: semantic)
+            }
+        case .measures?:
+            if let semantic = model.visibleModel {
+                AllMeasuresView(semantic: semantic)
+            }
+        case .pagesOverview?:
+            if let report = model.project?.report {
+                PagesOverviewView(report: report)
+            }
         case .table(let name)?:
-            if let table = model.project?.semanticModel?.table(named: name) {
+            if let table = model.visibleModel?.table(named: name) {
                 TableDetailView(table: table)
             }
         case .relationships?:
-            RelationshipsView(relationships: model.project?.semanticModel?.relationships ?? [])
+            RelationshipsView(relationships: model.visibleModel?.relationships ?? [])
         case .expressions?:
             ExpressionsView(expressions: model.project?.semanticModel?.expressions ?? [])
         case .page(let id)?:

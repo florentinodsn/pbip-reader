@@ -36,6 +36,17 @@ public struct SemanticModel: Codable, Equatable, Sendable {
     public func table(named name: String) -> Table? {
         tables.first { $0.name == name } ?? tables.first { $0.name.caseInsensitiveCompare(name) == .orderedSame }
     }
+
+    /// Le modèle sans les tables de date automatiques (option « Date/heure automatique » de Desktop),
+    /// ni les relations qui les touchent.
+    public var withoutAutoDateTables: SemanticModel {
+        var copy = self
+        let auto = Set(tables.filter(\.isAutoDateTable).map { $0.name.lowercased() })
+        guard !auto.isEmpty else { return self }
+        copy.tables.removeAll { $0.isAutoDateTable }
+        copy.relationships.removeAll { auto.contains($0.from.table.lowercased()) || auto.contains($0.to.table.lowercased()) }
+        return copy
+    }
 }
 
 public struct Table: Codable, Equatable, Sendable {
@@ -60,6 +71,12 @@ public struct Table: Codable, Equatable, Sendable {
         self.partitions = partitions
         self.hierarchies = hierarchies
         self.calculationItems = calculationItems
+    }
+
+    /// Table de date créée automatiquement par Desktop, reconnue à son nom
+    /// (`LocalDateTable_<guid>` ou `DateTableTemplate_<guid>`).
+    public var isAutoDateTable: Bool {
+        name.hasPrefix("LocalDateTable_") || name.hasPrefix("DateTableTemplate_")
     }
 
     public func column(named name: String) -> Column? {

@@ -71,7 +71,18 @@ struct MeasureCard: View {
     let table: String
     let measure: Measure
     let entry: Lineage.Entry?
-    @State private var expanded = true
+    /// Faux quand la mesure est déjà affichée dans son dossier.
+    var showsFolder = true
+    @Environment(\.expansionCommand) private var command
+    @State private var expanded: Bool
+
+    init(table: String, measure: Measure, entry: Lineage.Entry?, expanded: Bool = true, showsFolder: Bool = true) {
+        self.table = table
+        self.measure = measure
+        self.entry = entry
+        self.showsFolder = showsFolder
+        _expanded = State(initialValue: expanded)
+    }
 
     var body: some View {
         DisclosureGroup(isExpanded: $expanded) {
@@ -89,13 +100,17 @@ struct MeasureCard: View {
             HStack(spacing: 8) {
                 Text(measure.name).bold()
                 if let f = measure.formatString { Tag(f) }
-                if let folder = measure.displayFolder { Tag("📁 \(folder)") }
+                if showsFolder, let folder = measure.displayFolder { Tag("📁 \(folder)") }
                 if measure.isHidden { Tag("masquée") }
                 if let entry, entry.usedBy.isEmpty, entry.referencedBy.isEmpty {
                     Tag("inutilisée", color: .orange)
                 }
             }
+            .contentShape(Rectangle())
+            .onTapGesture { withAnimation { expanded.toggle() } }
         }
+        .onAppear { if let command { expanded = command.expanded } }
+        .onChange(of: command) { if let c = $0 { withAnimation { expanded = c.expanded } } }
     }
 }
 
@@ -157,10 +172,63 @@ struct ColumnsGrid: View {
 struct RelationshipsView: View {
     let relationships: [Relationship]
 
+    enum Filter: Hashable {
+        case all, table, column
+    }
+
+    @State private var filter = Filter.all
+    @State private var table = ""
+    @State private var column = ""
+
+    /// Noms sans doublon de casse (les références sont insensibles à la casse), triés.
+    static func distinct(_ names: [String]) -> [String] {
+        var seen = Set<String>()
+        return names.filter { seen.insert($0.lowercased()).inserted }
+            .sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+    }
+
+    var tables: [String] { Self.distinct(relationships.flatMap { [$0.from.table, $0.to.table] }) }
+    var columns: [String] { Self.distinct(relationships.flatMap { [$0.from.displayName, $0.to.displayName] }) }
+
+    var shown: [Relationship] {
+        func same(_ a: String, _ b: String) -> Bool { a.caseInsensitiveCompare(b) == .orderedSame }
+        switch filter {
+        case .all: return relationships
+        case .table: return relationships.filter { same($0.from.table, table) || same($0.to.table, table) }
+        case .column: return relationships.filter { same($0.from.displayName, column) || same($0.to.displayName, column) }
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("Relations").font(.title).bold()
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Relations").font(.title).bold()
+                    Text(filter == .all ? "\(relationships.count)" : "\(shown.count) / \(relationships.count)")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Picker("Filtrer", selection: $filter) {
+                        Text("Toutes").tag(Filter.all)
+                        Text("Par table").tag(Filter.table)
+                        Text("Par colonne").tag(Filter.column)
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .fixedSize()
+                    if filter == .table {
+                        Picker("Table", selection: $table) {
+                            ForEach(tables, id: \.self) { Text($0).tag($0) }
+                        }
+                        .labelsHidden()
+                        .frame(maxWidth: 220)
+                    } else if filter == .column {
+                        Picker("Colonne", selection: $column) {
+                            ForEach(columns, id: \.self) { Text($0).tag($0) }
+                        }
+                        .labelsHidden()
+                        .frame(maxWidth: 260)
+                    }
+                }
                 Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 16, verticalSpacing: 8) {
                     GridRow {
                         Text("De"); Text(""); Text("Vers"); Text("Cardinalité"); Text("Filtrage"); Text("Active")
@@ -168,7 +236,7 @@ struct RelationshipsView: View {
                     .font(.caption.bold())
                     .foregroundStyle(.secondary)
                     Divider()
-                    ForEach(relationships, id: \.id) { r in
+                    ForEach(shown, id: \.id) { r in
                         GridRow {
                             Text(r.from.displayName)
                             Image(systemName: r.crossFilteringBehavior == "bothDirections" ? "arrow.left.and.right" : "arrow.left")
@@ -181,9 +249,16 @@ struct RelationshipsView: View {
                         }
                     }
                 }
+                if shown.isEmpty {
+                    Text("Aucune relation.").foregroundStyle(.secondary)
+                }
             }
             .padding(20)
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .onChange(of: filter) { _ in
+            if !tables.contains(table) { table = tables.first ?? "" }
+            if !columns.contains(column) { column = columns.first ?? "" }
         }
     }
 }

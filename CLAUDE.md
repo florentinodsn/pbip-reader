@@ -26,7 +26,7 @@ La spécification de travail (format, sources, incertitudes, écarts) est dans `
 
 ```bash
 swift build
-swift test                                     # 76 tests XCTest
+swift test                                     # 82 tests XCTest
 PBIP_RECORD_SNAPSHOTS=1 swift test             # réécrit Tests/Snapshots après un changement voulu
 swift run pbip info Tests/Fixtures/Ventes      # CLI : info | model | report | lineage | validate
 swift run pbip-reader-app -project Tests/Fixtures/Ventes/Ventes.pbip   # app SwiftUI
@@ -51,7 +51,9 @@ Dans `Sources/PBIPKit/` :
 - `TMDL/` : lexer (indentation), parseur (arbre `TMDLNode`), `TMDLModelBuilder`.
 - `BIM/` : lecteur `model.bim`.
 - `Report/` : `PBIRReader`, `LegacyReportReader`, `FieldExtractor` (champs des visuels).
-- `Analysis/` : `DAXScanner` (balayage lexical), `LineageBuilder`, `Validator`.
+- `Analysis/` : `DAXScanner` (balayage lexical), `LineageBuilder`, `Validator`, `ModelDiagram`
+  (rôle faits/dimensions, dispositions « Ranger » et « Étoile / flocon », tracé des liens),
+  `MeasureFolder` (arbre des dossiers d'affichage).
 - `Output/` : rendus text / json / markdown par commande ; JSON à clés triées.
 - `Syntax/` : découpage en jetons DAX/M pour la coloration de l'app.
 
@@ -84,7 +86,6 @@ Dans `Sources/PBIPKit/` :
 
 ## Points ouverts
 
-- Rendu visuel de l'app jamais vérifié par capture d'écran : à valider à l'œil.
 - Titulaire de la licence : `florentinodsn` par défaut, nom complet possible.
 - `functions.tmdl` (UDF DAX) lu mais non exposé dans le modèle objet.
 - Message `model.unusedMeasure` bruyant sur un modèle partagé par plusieurs rapports (relatif au rapport lu).

@@ -154,7 +154,9 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
 - **Ordre des champs d'un visuel** : rôles par ordre alphabétique, ordre d'origine dans un rôle,
   puis filtres, puis tri. Doublons exacts supprimés.
 - **Rôle d'un champ** : nom du rôle de projection, `filter` ou `sort`.
-- **Tables `LocalDateTable_*` / `DateTableTemplate_*`** : lues comme les autres.
+- **Tables `LocalDateTable_*` / `DateTableTemplate_*`** : lues comme les autres par la CLI. L'app les
+  masque, avec leurs relations (tables de date automatiques de Desktop, reconnues à leur nom : le
+  lecteur ne conserve pas les annotations).
 - **Langue** : documentation en français, sortie de la CLI et diagnostics en anglais.
 - **Mesures inutilisées** : ni dans un visuel/filtre, ni référencées par le DAX d'une autre mesure
   (balayage lexical simple des `[Nom]`).

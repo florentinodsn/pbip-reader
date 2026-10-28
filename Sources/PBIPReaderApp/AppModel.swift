@@ -4,6 +4,9 @@ import PBIPKit
 
 /// Élément sélectionné dans la barre latérale.
 enum SidebarItem: Hashable {
+    case diagram
+    case measures
+    case pagesOverview
     case table(String)
     case relationships
     case expressions
@@ -16,6 +19,8 @@ enum SidebarItem: Hashable {
 final class AppModel: ObservableObject {
     @Published private(set) var url: URL?
     @Published private(set) var project: Project?
+    /// Modèle affiché : sans les tables de date automatiques, inutiles à la lecture.
+    @Published private(set) var visibleModel: SemanticModel?
     @Published private(set) var lineage = Lineage()
     @Published private(set) var diagnostics: [Diagnostic] = []
     @Published var selection: SidebarItem?
@@ -27,13 +32,14 @@ final class AppModel: ObservableObject {
             let lineage = LineageBuilder.build(project)
             self.url = url
             self.project = project
+            self.visibleModel = project.semanticModel?.withoutAutoDateTables
             self.lineage = lineage
             self.diagnostics = Validator.validate(project, lineage: lineage)
             self.errorMessage = nil
             if selection == nil || !isValid(selection!) {
-                selection = project.semanticModel?.tables.first.map { .table($0.name) }
-                    ?? project.report?.pages.first.map { .page($0.id) }
-                    ?? .diagnostics
+                selection = project.semanticModel != nil ? .diagram
+                    : project.report != nil ? .pagesOverview
+                    : .diagnostics
             }
             NSDocumentController.shared.noteNewRecentDocumentURL(url)
         } catch {
@@ -59,9 +65,10 @@ final class AppModel: ObservableObject {
 
     private func isValid(_ item: SidebarItem) -> Bool {
         switch item {
-        case .table(let name): return project?.semanticModel?.table(named: name) != nil
+        case .table(let name): return visibleModel?.table(named: name) != nil
         case .page(let id): return project?.report?.pages.contains { $0.id == id } == true
-        case .relationships, .expressions: return project?.semanticModel != nil
+        case .diagram, .measures, .relationships, .expressions: return project?.semanticModel != nil
+        case .pagesOverview: return project?.report != nil
         case .diagnostics: return true
         }
     }
