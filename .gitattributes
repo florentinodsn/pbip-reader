@@ -1,0 +1,2 @@
+# Les fichiers d'exemple sont gardés octet pour octet (CRLF, BOM) : ils servent de tests.
+Tests/Fixtures/** -text
