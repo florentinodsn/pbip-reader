@@ -8,7 +8,7 @@ struct Pbip: ParsableCommand {
         commandName: "pbip",
         abstract: "Read-only explorer for PBIP projects (report + semantic model).",
         version: PBIPKit.version,
-        subcommands: [Info.self, Validate.self]
+        subcommands: [Info.self, Model.self, ReportCommand.self, LineageCommand.self, Validate.self]
     )
 }
 
@@ -72,19 +72,81 @@ struct Info: ParsableCommand {
     }
 }
 
+struct Model: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        abstract: "Tables, columns, measures (with DAX), relationships, M queries.")
+
+    @OptionGroup var options: CommonOptions
+
+    @Option(name: .long, help: "Only show this table and its relationships.")
+    var table: String?
+
+    func run() throws {
+        let project = try options.loadProject()
+        guard let model = project.semanticModel else {
+            throw ValidationError(project.datasetReference?.kind == .byConnection
+                ? "The report uses a published semantic model; no local model to show."
+                : "No readable semantic model in this project. Run 'pbip validate' for details.")
+        }
+        guard let filtered = ModelRenderer.filter(model, table: table) else {
+            throw ValidationError("No table named '\(table ?? "")'. Tables: \(model.tables.map(\.name).joined(separator: ", "))")
+        }
+        write(ModelRenderer(style: options.style).render(filtered, format: options.outputFormat))
+    }
+}
+
+struct ReportCommand: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "report",
+        abstract: "Pages and visuals, with the fields they use.")
+
+    @OptionGroup var options: CommonOptions
+
+    @Option(name: .long, help: "Only show this page (id or display name).")
+    var page: String?
+
+    func run() throws {
+        let project = try options.loadProject()
+        guard let report = project.report else {
+            throw ValidationError("No readable report in this project. Run 'pbip validate' for details.")
+        }
+        guard let filtered = ReportRenderer.filter(report, page: page) else {
+            throw ValidationError("No page named '\(page ?? "")'. Pages: \(report.pages.map(\.displayName).joined(separator: ", "))")
+        }
+        write(ReportRenderer(style: options.style).render(filtered, format: options.outputFormat))
+    }
+}
+
+struct LineageCommand: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "lineage",
+        abstract: "For each measure or column, the visuals that use it; and the reverse.")
+
+    @OptionGroup var options: CommonOptions
+
+    @Option(name: .long, help: "Only show objects with this name (measure or column).")
+    var measure: String?
+
+    func run() throws {
+        let project = try options.loadProject()
+        let lineage = LineageBuilder.build(project)
+        guard let filtered = LineageRenderer.filter(lineage, name: measure) else {
+            throw ValidationError("No measure or column named '\(measure ?? "")'.")
+        }
+        write(LineageRenderer(style: options.style).render(filtered, format: options.outputFormat))
+    }
+}
+
 struct Validate: ParsableCommand {
     static let configuration = CommandConfiguration(
-        abstract: "Diagnostics: broken references, unknown fields, conflicting formats, unused measures.")
+        abstract: "Diagnostics: broken references, unknown fields, conflicting formats, unused measures. Exits with 1 on errors.")
 
     @OptionGroup var options: CommonOptions
 
     func run() throws {
         let project = try options.loadProject()
-        let style = options.style
-        for d in project.diagnostics.sortedForOutput() {
-            let location = [d.file, d.line.map(String.init)].compactMap { $0 }.joined(separator: ":")
-            write("\(style.severity(d.severity))  \(d.code)  \(location)  \(d.message)\n")
-        }
-        if project.diagnostics.hasErrors { throw ExitCode(1) }
+        let diagnostics = Validator.validate(project)
+        write(ValidationRenderer(style: options.style).render(diagnostics, format: options.outputFormat))
+        if diagnostics.hasErrors { throw ExitCode(1) }
     }
 }

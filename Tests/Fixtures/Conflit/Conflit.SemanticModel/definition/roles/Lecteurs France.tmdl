@@ -1,0 +1,4 @@
+role 'Lecteurs France'
+	modelPermission: read
+
+	tablePermission Produits = Produits[Catégorie] <> "Interne"

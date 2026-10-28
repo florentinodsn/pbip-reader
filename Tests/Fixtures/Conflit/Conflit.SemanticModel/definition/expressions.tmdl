@@ -1,0 +1,4 @@
+expression 'Dossier source' = "/exemple/donnees" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 3b0b6c1e-0000-4000-8000-000000000101
+
+	annotation PBI_ResultType = Text
