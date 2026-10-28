@@ -1,14 +1,26 @@
 #!/bin/sh
-# Construit « PBIP Reader.app » à partir de la cible SwiftPM pbip-reader-app (non signée).
+# Construit « PBIP Reader.app » à partir de la cible SwiftPM pbip-reader-app.
 # Usage : Scripts/make-app.sh [dossier de sortie, par défaut .build]
+# Variables facultatives :
+#   UNIVERSAL=1      binaire universel Apple Silicon + Intel (sinon : architecture de la machine)
+#   SIGN_IDENTITY    identité Developer ID ; l'app est alors signée (runtime renforcé, horodatage)
 set -eu
 cd "$(dirname "$0")/.."
 OUT="${1:-.build}"
-swift build -c release --product pbip-reader-app
+VERSION=$(sed -n 's/.*current = "\(.*\)".*/\1/p' Sources/PBIPKit/PBIPKit.swift)
+
+if [ "${UNIVERSAL:-0}" = 1 ]; then
+  swift build -c release --product pbip-reader-app --arch arm64 --arch x86_64
+  BINARY=.build/apple/Products/Release/pbip-reader-app
+else
+  swift build -c release --product pbip-reader-app
+  BINARY=.build/release/pbip-reader-app
+fi
+
 APP="$OUT/PBIP Reader.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/pbip-reader-app "$APP/Contents/MacOS/"
+cp "$BINARY" "$APP/Contents/MacOS/"
 
 # Icône : dessinée par Scripts/make-icon.swift, déclinée en .icns avec sips et iconutil.
 ICONSET=".build/AppIcon.iconset"
@@ -30,9 +42,15 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <key>CFBundleIdentifier</key><string>io.github.florentinodsn.pbip-reader</string>
 <key>CFBundleName</key><string>PBIP Reader</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.2.0</string>
+<key>CFBundleShortVersionString</key><string>$VERSION</string>
+<key>CFBundleVersion</key><string>$VERSION</string>
 <key>LSMinimumSystemVersion</key><string>13.0</string>
 <key>NSHighResolutionCapable</key><true/>
 </dict></plist>
 PLIST
+
+if [ -n "${SIGN_IDENTITY:-}" ]; then
+  codesign --force --options runtime --timestamp --sign "$SIGN_IDENTITY" "$APP"
+  codesign --verify --strict --verbose=2 "$APP"
+fi
 echo "$APP"
