@@ -141,6 +141,9 @@ swift test
 Les fichiers d'exemple de `Tests/Fixtures/` sont des projets **fictifs** écrits à la main.
 Pour régénérer les snapshots JSON : `PBIP_RECORD_SNAPSHOTS=1 swift test`.
 
+Construction du `.dmg`, signature, notarisation et publication d'une version :
+[`docs/RELEASE.md`](docs/RELEASE.md).
+
 ## Licence
 
 MIT — voir [LICENSE](LICENSE).
