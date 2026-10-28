@@ -23,12 +23,43 @@ entre les visuels et le modèle.
 
 ## Installation
 
-Prérequis : macOS 13 ou plus, Swift 5.9 ou plus (Xcode 15+).
+Il faut macOS 13 ou plus et les outils de développement d'Apple (Swift 5.9 ou plus). S'ils ne sont
+pas encore installés, une seule commande suffit (une fenêtre s'ouvre, cliquer sur « Installer ») :
+
+```bash
+xcode-select --install
+```
+
+### L'application
+
+```bash
+git clone https://github.com/florentinodsn/pbip-reader.git
+cd pbip-reader
+Scripts/make-app.sh /Applications
+```
+
+« PBIP Reader » est alors dans le dossier Applications : on la lance depuis le Launchpad, Spotlight
+ou le Finder, puis `⌘O` pour ouvrir un projet. Compilée sur la machine, elle s'ouvre sans
+avertissement de macOS.
+
+Pour la mettre à jour, depuis le dossier `pbip-reader` :
+
+```bash
+git pull
+Scripts/make-app.sh /Applications
+```
+
+Pour la désinstaller, mettre « PBIP Reader » du dossier Applications à la corbeille.
+
+### La ligne de commande (facultatif)
 
 ```bash
 swift build -c release
-cp .build/release/pbip /usr/local/bin/
+sudo mkdir -p /usr/local/bin
+sudo cp .build/release/pbip /usr/local/bin/
 ```
+
+`pbip --help` liste ensuite les commandes.
 
 ## Utilisation
 
@@ -68,9 +99,11 @@ Une application SwiftUI en lecture seule accompagne la CLI :
 
 Les tables de date automatiques (`LocalDateTable_…`, `DateTableTemplate_…`) y sont masquées.
 
+Pour l'installer, voir [Installation](#lapplication). En développement :
+
 ```bash
-swift run pbip-reader-app -project chemin/vers/MonRapport.pbip   # lancement direct
-Scripts/make-app.sh                                              # construit « PBIP Reader.app »
+swift run pbip-reader-app -project chemin/vers/MonRapport.pbip   # lancement direct, sans icône
+Scripts/make-app.sh                                              # construit .build/PBIP Reader.app
 ```
 
 Dans l'application : `⌘O` ouvre un projet (fichier `.pbip` ou dossier), `⌘R` le relit ; on peut
