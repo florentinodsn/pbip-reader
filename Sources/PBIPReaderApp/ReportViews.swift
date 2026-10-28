@@ -8,7 +8,9 @@ struct PageDetailView: View {
     @State private var selectedVisual: String?
 
     var body: some View {
-        HSplitView {
+        // HStack plutôt que HSplitView : imbriqué dans le détail d'un NavigationSplitView, HSplitView
+        // débordait de la fenêtre et repoussait la barre latérale.
+        HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(page.displayName).font(.title).bold()
@@ -23,10 +25,13 @@ struct PageDetailView: View {
                 PageCanvas(page: page, selection: $selectedVisual)
             }
             .padding(20)
-            .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            Divider()
 
             VisualInspector(page: page, visual: page.visuals.first { $0.id == selectedVisual })
-                .frame(minWidth: 260, idealWidth: 300, maxWidth: 420, maxHeight: .infinity)
+                .frame(width: 280)
+                .frame(maxHeight: .infinity)
         }
         .onChange(of: page.id) { _ in selectedVisual = nil }
     }
@@ -123,7 +128,6 @@ struct VisualInspector: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .background(Color(nsColor: .underPageBackgroundColor))
     }
 }
 
@@ -185,39 +189,45 @@ struct DiagnosticsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Diagnostics").font(.title).bold()
-                Spacer()
-                Picker("Gravité", selection: $severity) {
-                    Text("Tous (\(diagnostics.count))").tag(Diagnostic.Severity?.none)
-                    ForEach(Diagnostic.Severity.allCases, id: \.self) { s in
-                        Text("\(label(s)) (\(diagnostics.filter { $0.severity == s }.count))").tag(Diagnostic.Severity?.some(s))
-                    }
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 420)
-            }
-            if shown.isEmpty {
-                Label("Aucun diagnostic.", systemImage: "checkmark.seal").foregroundStyle(.secondary)
-                Spacer()
-            } else {
-                List(Array(shown.enumerated()), id: \.offset) { _, d in
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Image(systemName: icon(d.severity)).foregroundStyle(color(d.severity))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(d.message).textSelection(.enabled)
-                            Text([d.code, d.file.map { f in d.line.map { "\(f):\($0)" } ?? f }].compactMap { $0 }.joined(separator: " · "))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .textSelection(.enabled)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("Diagnostics").font(.title).bold()
+                    Spacer()
+                    Picker("Gravité", selection: $severity) {
+                        Text("Tous (\(diagnostics.count))").tag(Diagnostic.Severity?.none)
+                        ForEach(Diagnostic.Severity.allCases, id: \.self) { s in
+                            Text("\(label(s)) (\(diagnostics.filter { $0.severity == s }.count))").tag(Diagnostic.Severity?.some(s))
                         }
                     }
-                    .padding(.vertical, 2)
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .frame(maxWidth: 420)
+                }
+                if shown.isEmpty {
+                    Label("Aucun diagnostic.", systemImage: "checkmark.seal").foregroundStyle(.secondary)
+                }
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(shown.enumerated()), id: \.offset) { i, d in
+                        if i > 0 { Divider() }
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Image(systemName: icon(d.severity)).foregroundStyle(color(d.severity))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(d.message).textSelection(.enabled)
+                                Text([d.code, d.file.map { f in d.line.map { "\(f):\($0)" } ?? f }].compactMap { $0 }.joined(separator: " · "))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .textSelection(.enabled)
+                            }
+                        }
+                        .padding(.vertical, 6)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
             }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(20)
     }
 
     func label(_ s: Diagnostic.Severity) -> String {

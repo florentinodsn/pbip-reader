@@ -7,7 +7,7 @@ struct CodeView: View {
     let language: SyntaxTokenizer.Language
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ScrollView(.horizontal) {
             Text(highlighted)
                 .font(.system(.callout, design: .monospaced))
                 .textSelection(.enabled)
