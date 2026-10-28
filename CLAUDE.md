@@ -30,10 +30,14 @@ swift test                                     # 90 tests XCTest
 PBIP_RECORD_SNAPSHOTS=1 swift test             # réécrit Tests/Snapshots après un changement voulu
 swift run pbip info Tests/Fixtures/Ventes      # CLI : info | model | report | lineage | validate
 swift run pbip-reader-app -project Tests/Fixtures/Ventes/Ventes.pbip   # app SwiftUI
-Scripts/make-app.sh                            # construit « PBIP Reader.app » (non signée)
+Scripts/make-app.sh [/Applications]           # construit « PBIP Reader.app » (icône : Scripts/make-icon.swift)
+Scripts/make-dmg.sh                            # dist/PBIP-Reader.dmg, universel ; signé si les variables sont là
 ```
 
 CI : `.github/workflows/ci.yml` (`swift build` + `swift test` sur `macos-latest`).
+Release : tag `vX.Y.Z` = `PBIPKitVersion.current` → `release.yml` (signature, notarisation, Release
+GitHub ; secrets décrits dans `docs/RELEASE.md`). Site : `site/` (Markdown, thème Jekyll Cayman),
+publié par `pages.yml` sur https://florentinodsn.github.io/pbip-reader/.
 
 ## Architecture
 

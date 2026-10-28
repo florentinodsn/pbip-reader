@@ -1,0 +1,5 @@
+# Site GitHub Pages, construit par .github/workflows/pages.yml (Jekyll, thème pris en charge par GitHub).
+title: PBIP Reader
+description: Lecteur macOS, en lecture seule, des projets PBIP · Read-only macOS reader for PBIP projects
+theme: jekyll-theme-cayman
+lang: fr

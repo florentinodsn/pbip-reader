@@ -4,6 +4,8 @@ Lecteur en ligne de commande, pour macOS, des projets au format **PBIP**. Il aff
 d'un projet : modèle de données, mesures DAX, relations, requêtes M, pages, visuels et lignage
 entre les visuels et le modèle.
 
+Site : **https://florentinodsn.github.io/pbip-reader/**
+
 > Ce projet n'est ni affilié à Microsoft ni approuvé par Microsoft. Power BI est une marque de Microsoft Corporation.
 
 ## Principes
@@ -31,6 +33,12 @@ xcode-select --install
 ```
 
 ### L'application
+
+Le plus simple : télécharger
+[PBIP-Reader.dmg](https://github.com/florentinodsn/pbip-reader/releases/latest/download/PBIP-Reader.dmg)
+(signé et notarisé), l'ouvrir et glisser « PBIP Reader » sur le dossier Applications.
+
+Ou depuis les sources :
 
 ```bash
 git clone https://github.com/florentinodsn/pbip-reader.git
