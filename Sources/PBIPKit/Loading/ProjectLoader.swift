@@ -53,10 +53,34 @@ public struct ProjectLoader {
             project.semanticModelPath = sink.relativePath(modelURL)
             project.semanticModelDisplayName = platformDisplayName(modelURL, reader: reader)
             project.semanticModel = SemanticModelReader(reader: reader, sink: sink).read(modelURL)
+            if let reportURL {
+                project.siblingReports = siblingReports(of: modelURL, excluding: reportURL, sink: sink)
+            }
         }
 
         project.diagnostics = sink.items
         return project
+    }
+
+    /// Rapports voisins du modèle (même dossier) dont `byPath` mène à ce modèle. Ils sont lus avec un
+    /// collecteur à part : leurs propres diagnostics ne concernent pas le projet ouvert.
+    func siblingReports(of modelURL: URL, excluding reportURL: URL, sink: DiagnosticSink) -> [Project.SiblingReport] {
+        let folder = modelURL.deletingLastPathComponent()
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
+        var result: [Project.SiblingReport] = []
+        for name in names.sorted() where name.hasSuffix(".Report") {
+            let url = folder.appendingPathComponent(name).standardizedFileURL
+            guard url.path != reportURL.standardizedFileURL.path, FileReader.isDirectory(url) else { continue }
+            let quiet = DiagnosticSink(root: folder)
+            let reader = FileReader(sink: quiet)
+            let pbir = url.appendingPathComponent("definition.pbir")
+            guard FileReader.exists(pbir), let json = reader.readJSON(pbir) else { continue }
+            let (_, target) = readDatasetReference(json, reportURL: url, pbir: pbir, sink: quiet)
+            guard target?.standardizedFileURL.path == modelURL.standardizedFileURL.path,
+                  let report = ReportReader(reader: reader, sink: quiet).read(url) else { continue }
+            result.append(Project.SiblingReport(path: sink.relativePath(url), report: report))
+        }
+        return result
     }
 
     // MARK: - Résolution du point d'entrée

@@ -1,0 +1,32 @@
+table Mouvements
+	lineageTag: 5c0d0000-0000-4000-8000-000000000001
+
+	measure Montant = SUM(Mouvements[Montant])
+		lineageTag: 5c0d0000-0000-4000-8000-000000000002
+
+	measure 'Taxe totale' = Taxe()
+		lineageTag: 5c0d0000-0000-4000-8000-000000000003
+
+	measure Quantité = SUM(Mouvements[Quantité])
+		lineageTag: 5c0d0000-0000-4000-8000-000000000004
+
+	measure Inutile = 1
+		lineageTag: 5c0d0000-0000-4000-8000-000000000005
+
+	column Montant
+		dataType: decimal
+		lineageTag: 5c0d0000-0000-4000-8000-000000000006
+		sourceColumn: Montant
+
+	column Quantité
+		dataType: int64
+		lineageTag: 5c0d0000-0000-4000-8000-000000000007
+		sourceColumn: Quantité
+
+	partition Mouvements = m
+		mode: import
+		source =
+				let
+					Source = #table({"Montant", "Quantité"}, {})
+				in
+					Source

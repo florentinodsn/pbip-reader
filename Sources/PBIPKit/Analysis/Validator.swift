@@ -2,11 +2,13 @@ import Foundation
 
 /// Diagnostics complets d'un projet : ceux de la lecture, plus les contrôles de cohérence.
 public enum Validator {
-    public static func validate(_ project: Project) -> [Diagnostic] {
-        validate(project, lineage: LineageBuilder.build(project))
+    /// `unusedMeasures` à faux : pas de `model.unusedMeasure` (modèle partagé avec des rapports
+    /// publiés ailleurs, que l'outil ne voit pas).
+    public static func validate(_ project: Project, unusedMeasures: Bool = true) -> [Diagnostic] {
+        validate(project, lineage: LineageBuilder.build(project), unusedMeasures: unusedMeasures)
     }
 
-    public static func validate(_ project: Project, lineage: Lineage) -> [Diagnostic] {
+    public static func validate(_ project: Project, lineage: Lineage, unusedMeasures: Bool = true) -> [Diagnostic] {
         var out = project.diagnostics
         let modelFile = project.semanticModelPath
 
@@ -24,16 +26,36 @@ public enum Validator {
             }
             out += fieldDiagnostics(lineage.filters, context: "Filter", file: project.reportPath)
 
-            // Mesures inutilisées : seulement si le rapport et le modèle sont lus ensemble.
-            if project.semanticModel != nil {
-                for entry in lineage.unusedMeasures {
-                    out.append(Diagnostic(.info, code: "model.unusedMeasure",
-                                          message: "Measure \(entry.displayName) is not used by this report: no visual or filter reaches it, directly or through another measure.",
-                                          file: modelFile))
-                }
+            // Mesures inutilisées : seulement si le rapport et le modèle sont lus ensemble, et sur
+            // l'ensemble des rapports locaux qui pointent vers ce modèle.
+            if unusedMeasures, project.semanticModel != nil {
+                out += unusedMeasureDiagnostics(project, lineage: lineage, file: modelFile)
             }
         }
         return out.sortedForOutput()
+    }
+
+    static func unusedMeasureDiagnostics(_ project: Project, lineage: Lineage, file: String?) -> [Diagnostic] {
+        var unused = lineage.unusedMeasures
+        for sibling in project.siblingReports {
+            var other = project
+            other.report = sibling.report
+            other.siblingReports = []
+            let unusedThere = Set(LineageBuilder.build(other).unusedMeasures.map { Lineage.key($0.table, $0.name) })
+            unused = unused.filter { unusedThere.contains(Lineage.key($0.table, $0.name)) }
+        }
+        let scope: String
+        if project.siblingReports.isEmpty {
+            scope = "is not used by this report"
+        } else {
+            let others = project.siblingReports.map(\.name).joined(separator: ", ")
+            scope = "is used neither by this report nor by the other local reports on this model (\(others))"
+        }
+        return unused.map { entry in
+            Diagnostic(.info, code: "model.unusedMeasure",
+                       message: "Measure \(entry.displayName) \(scope): no visual or filter reaches it, directly or through other measures or functions.",
+                       file: file)
+        }
     }
 
     static func fieldDiagnostics(_ fields: [Lineage.ResolvedField], context: String, file: String?) -> [Diagnostic] {

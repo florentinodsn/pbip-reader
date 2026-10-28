@@ -40,6 +40,37 @@ final class LineageAndValidationTests: XCTestCase {
         XCTAssertNil(UserFunction(name: "X", expression: "SUM(1)").signature)
     }
 
+    // MARK: - Modèle partagé
+
+    func partage(_ report: String) throws -> Project {
+        try ProjectLoader().load(Fixtures.root.appendingPathComponent("Partage/\(report).pbip"))
+    }
+
+    func testSiblingReportsOnTheSameModelAreFound() throws {
+        // Autre.Report est dans le même dossier mais pointe vers un autre modèle : ignoré.
+        XCTAssertEqual(try partage("Achats").siblingReports.map(\.name), ["Stocks"])
+        XCTAssertEqual(try partage("Stocks").siblingReports.map(\.name), ["Achats"])
+        XCTAssertEqual(try partage("Achats").diagnostics, [])
+    }
+
+    func testMeasureReachedThroughAFunctionIsUsed() throws {
+        let lineage = LineageBuilder.build(try partage("Achats"))
+        let montant = try XCTUnwrap(lineage.entries.first { $0.name == "Montant" && $0.kind == .measure })
+        XCTAssertEqual(montant.referencedBy, ["Mouvements[Taxe totale]"])
+        // Pour ce seul rapport : Quantité (utilisée par Stocks) et Inutile.
+        XCTAssertEqual(lineage.unusedMeasures.map(\.name), ["Quantité", "Inutile"])
+    }
+
+    func testUnusedMeasuresAreJudgedOnAllLocalReports() throws {
+        for report in ["Achats", "Stocks"] {
+            let diagnostics = Validator.validate(try partage(report))
+            XCTAssertEqual(diagnostics.map(\.message), [
+                "Measure Mouvements[Inutile] is used neither by this report nor by the other local reports on this model (\(report == "Achats" ? "Stocks" : "Achats")): no visual or filter reaches it, directly or through other measures or functions.",
+            ], report)
+            XCTAssertEqual(Validator.validate(try partage(report), unusedMeasures: false), [], report)
+        }
+    }
+
     func testDAXScannerHandlesEscapedBracket() {
         XCTAssertEqual(DAXScanner.references(in: "[Taux ]]x]]]"), [DAXReference(table: nil, name: "Taux ]x]")])
     }

@@ -38,6 +38,7 @@ pbip model    <chemin> [--table X]    tables, colonnes, mesures (avec DAX), rela
 pbip report   <chemin> [--page X]     pages et visuels, avec les champs utilisés
 pbip lineage  <chemin> [--measure X]  qui utilise quoi, dans les deux sens
 pbip validate <chemin>                diagnostics ; code de sortie ≠ 0 en cas d'erreur
+              [--no-unused-measures]   sans les mesures inutilisées (modèle partagé avec des rapports publiés)
 
 Options communes : --format text|json|markdown, --no-color
 ```

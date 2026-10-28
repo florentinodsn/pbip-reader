@@ -1,0 +1,5 @@
+/// Taxe fictive : 20 % du montant.
+function Taxe =
+		() =>
+			[Montant] * 0.2
+	lineageTag: 5c0d0000-0000-4000-8000-000000000301

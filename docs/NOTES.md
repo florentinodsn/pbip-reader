@@ -159,7 +159,11 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
   lecteur ne conserve pas les annotations).
 - **Langue** : documentation en français, sortie de la CLI et diagnostics en anglais.
 - **Mesures inutilisées** : ni dans un visuel/filtre, ni référencées par le DAX d'une autre mesure
-  (balayage lexical simple des `[Nom]`).
+  (balayage lexical simple des `[Nom]`), ni par le corps d'une fonction appelée par un objet utilisé
+  (fonctions imbriquées comprises). Le jugement porte sur **tous les rapports locaux** du modèle :
+  les dossiers `*.Report` voisins du modèle dont `byPath` y mène sont lus (diagnostics ignorés), et
+  une mesure n'est signalée que si aucun ne l'atteint. Les rapports publiés ailleurs restent
+  invisibles : `pbip validate --no-unused-measures` supprime alors ce message.
 
 ## 6. Incertitudes et écarts avec le prompt
 
@@ -191,8 +195,7 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
     `model.functions` (`name`, `expression` en chaîne ou en lignes, `description`, `isHidden`),
     sur le modèle des autres collections. À confirmer.
   - Les appels sont repérés par balayage lexical (nom suivi de `(`), hors chaînes et commentaires.
-    Les références d'une fonction aux mesures ne comptent pas encore dans le lignage :
-    `model.unusedMeasure` peut signaler une mesure appelée seulement depuis une fonction.
+    Un objet qui appelle une fonction « référence » ce que le corps de la fonction référence.
 - **Nom du modèle publié** : la doc montre deux formes de chaîne de connexion ; l'extraction de
   `initial catalog` est une heuristique.
 - **Écart avec le prompt (contrainte « salle blanche »)** : en plus des fichiers fictifs, la

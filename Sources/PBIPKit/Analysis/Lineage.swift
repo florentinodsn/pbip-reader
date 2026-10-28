@@ -139,10 +139,24 @@ public enum LineageBuilder {
             for c in table.columns { if let e = c.expression { daxSources.append((table.name, c.name, e)) } }
         }
         for m in extensions { daxSources.append((m.table, m.name, m.expression)) }
+
+        // Un objet qui appelle une fonction dépend aussi de ce que le corps de la fonction référence,
+        // fonctions imbriquées comprises.
+        func functionReferences(_ expression: String, seen: inout Set<String>) -> [DAXReference] {
+            var refs: [DAXReference] = []
+            for call in DAXScanner.calls(in: expression) {
+                guard let f = model?.function(named: call), seen.insert(f.name.lowercased()).inserted else { continue }
+                refs += DAXScanner.references(in: f.expression) + functionReferences(f.expression, seen: &seen)
+            }
+            return refs
+        }
+
         for source in daxSources {
             let sourceKey = Lineage.key(source.table, source.name)
             var references: [String] = []
-            for ref in DAXScanner.references(in: source.expression) {
+            var seen = Set<String>()
+            let refs = DAXScanner.references(in: source.expression) + functionReferences(source.expression, seen: &seen)
+            for ref in refs {
                 guard let target = resolveDAX(ref, from: source.table, model: model, extensions: extensions) else { continue }
                 let targetKey = Lineage.key(target.table, target.name)
                 guard targetKey != sourceKey, entries[targetKey] != nil else { continue }

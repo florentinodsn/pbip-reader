@@ -46,7 +46,7 @@
     {
       "code" : "model.unusedMeasure",
       "file" : "RefCassee.SemanticModel",
-      "message" : "Measure Ventes[Total orphelin] is not used by this report: no visual or filter reaches it, directly or through another measure.",
+      "message" : "Measure Ventes[Total orphelin] is not used by this report: no visual or filter reaches it, directly or through other measures or functions.",
       "severity" : "info"
     },
     {

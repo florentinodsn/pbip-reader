@@ -3,7 +3,7 @@
     {
       "code" : "model.unusedMeasure",
       "file" : "Ventes.SemanticModel",
-      "message" : "Measure Ventes[Total HT N-1] is not used by this report: no visual or filter reaches it, directly or through another measure.",
+      "message" : "Measure Ventes[Total HT N-1] is not used by this report: no visual or filter reaches it, directly or through other measures or functions.",
       "severity" : "info"
     }
   ],

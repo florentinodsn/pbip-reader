@@ -149,9 +149,13 @@ struct Validate: ParsableCommand {
 
     @OptionGroup var options: CommonOptions
 
+    @Flag(name: .customLong("no-unused-measures"),
+          help: "Do not report unused measures (for a model shared with reports published elsewhere).")
+    var noUnusedMeasures = false
+
     func run() throws {
         let project = try options.loadProject()
-        let diagnostics = Validator.validate(project)
+        let diagnostics = Validator.validate(project, unusedMeasures: !noUnusedMeasures)
         write(ValidationRenderer(style: options.style).render(diagnostics, format: options.outputFormat))
         if diagnostics.hasErrors { throw ExitCode(1) }
     }

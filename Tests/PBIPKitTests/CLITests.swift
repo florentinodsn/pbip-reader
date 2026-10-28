@@ -32,6 +32,14 @@ final class CLITests: XCTestCase {
         XCTAssertEqual(try run(["validate", Fixtures.url("Conflit").path, "--no-color"]).status, 1)
     }
 
+    func testValidateCanSkipUnusedMeasures() throws {
+        let path = Fixtures.root.appendingPathComponent("Partage/Achats.pbip").path
+        XCTAssertTrue(try run(["validate", path, "--no-color"]).output.contains("model.unusedMeasure"))
+        let (status, output) = try run(["validate", path, "--no-color", "--no-unused-measures"])
+        XCTAssertEqual(status, 0)
+        XCTAssertFalse(output.contains("model.unusedMeasure"), output)
+    }
+
     func testInfoOnTheThreeExamples() throws {
         for name in ["Ventes", "VentesLegacy", "Publie"] {
             let (status, output) = try run(["info", Fixtures.url(name).path, "--no-color"])

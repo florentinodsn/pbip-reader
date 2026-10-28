@@ -35,6 +35,26 @@ public struct Project: Codable, Equatable, Sendable {
     public var semanticModel: SemanticModel?
     public var datasetReference: DatasetReference?
     public var diagnostics: [Diagnostic]
+    /// Autres rapports du dossier du modèle qui pointent vers le même modèle (`byPath`) : les mesures
+    /// inutilisées se jugent sur l'ensemble des rapports locaux. Non sérialisé.
+    public var siblingReports: [SiblingReport] = []
+
+    public struct SiblingReport: Equatable, Sendable {
+        /// Chemin relatif à `rootURL`.
+        public var path: String
+        public var report: Report
+
+        public init(path: String, report: Report) {
+            self.path = path
+            self.report = report
+        }
+
+        /// Nom du dossier sans le suffixe `.Report`.
+        public var name: String {
+            let last = path.split(separator: "/").last.map(String.init) ?? path
+            return last.hasSuffix(".Report") ? String(last.dropLast(".Report".count)) : last
+        }
+    }
 
     enum CodingKeys: String, CodingKey {
         case name, reportPath, semanticModelPath, reportDisplayName, semanticModelDisplayName
