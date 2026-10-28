@@ -1,9 +1,10 @@
 {
-  "compatibilityLevel" : 1567,
+  "compatibilityLevel" : 1702,
   "counts" : {
     "bookmarks" : 1,
     "columns" : 10,
     "expressions" : 1,
+    "functions" : 2,
     "measures" : 5,
     "pages" : 2,
     "relationships" : 2,

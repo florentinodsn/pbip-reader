@@ -18,6 +18,28 @@ final class LineageAndValidationTests: XCTestCase {
         ])
     }
 
+    func testDAXScannerFindsCallsOutsideStringsAndComments() {
+        let calls = DAXScanner.calls(in: """
+        // Commentaire ( ignoré
+        ROUND ( Outils.Arrondir([Total HT]) , 2 ) + Outils.arrondir (1) & "Faux(1)" + 'Table (x)'[Col] /* Bloc(2) */ + Ventes[Prix (HT)]
+        """)
+        XCTAssertEqual(calls, ["ROUND", "Outils.Arrondir"])
+    }
+
+    func testUserFunctionSignature() throws {
+        let f = UserFunction(name: "F", expression: "( a, b : SCALAR INT64  VAL, c : STRING = \"x, (y)\", d : ANYREF ) =>\n\tIF ( a, b )")
+        let s = try XCTUnwrap(f.signature)
+        XCTAssertEqual(s.parameters, [
+            UserFunction.Parameter(name: "a", typeHint: nil, defaultExpression: nil),
+            UserFunction.Parameter(name: "b", typeHint: "SCALAR INT64 VAL", defaultExpression: nil),
+            UserFunction.Parameter(name: "c", typeHint: "STRING", defaultExpression: "\"x, (y)\""),
+            UserFunction.Parameter(name: "d", typeHint: "ANYREF", defaultExpression: nil),
+        ])
+        XCTAssertEqual(s.body, "IF ( a, b )")
+        XCTAssertEqual(UserFunction(name: "R", expression: "() => RANDBETWEEN ( 10, 100 )").signature?.parameters, [])
+        XCTAssertNil(UserFunction(name: "X", expression: "SUM(1)").signature)
+    }
+
     func testDAXScannerHandlesEscapedBracket() {
         XCTAssertEqual(DAXScanner.references(in: "[Taux ]]x]]]"), [DAXReference(table: nil, name: "Taux ]x]")])
     }

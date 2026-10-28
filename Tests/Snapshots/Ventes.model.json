@@ -1,5 +1,5 @@
 {
-  "compatibilityLevel" : 1567,
+  "compatibilityLevel" : 1702,
   "culture" : "fr-FR",
   "cultures" : [
     "fr-FR"
@@ -13,6 +13,19 @@
     }
   ],
   "format" : "tmdl",
+  "functions" : [
+    {
+      "description" : "Applique un taux de TVA (20 % par défaut) à un montant hors taxes.",
+      "expression" : "(montant : NUMERIC, taux : NUMERIC = 0.2) =>\n\tmontant * ( 1 + taux )",
+      "isHidden" : false,
+      "name" : "Fiscalite.AppliquerTVA"
+    },
+    {
+      "expression" : "(montantHT : SCALAR NUMERIC VAL) =>\n\tROUND ( Fiscalite.AppliquerTVA ( montantHT ), 2 )",
+      "isHidden" : false,
+      "name" : "MontantTTC"
+    }
+  ],
   "perspectives" : [
 
   ],

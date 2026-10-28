@@ -36,6 +36,11 @@ public struct BIMModelBuilder {
                                    expression: Self.expression(e["expression"]) ?? "",
                                    description: e["description"]?.string)
         }
+        model.functions = (m["functions"]?.array ?? []).compactMap { f in
+            guard let name = f["name"]?.string else { return nil }
+            return UserFunction(name: name, expression: Self.expression(f["expression"]) ?? "",
+                                description: f["description"]?.string, isHidden: f["isHidden"]?.bool ?? false)
+        }
         model.roles = (m["roles"]?.array ?? []).compactMap { r in
             guard let name = r["name"]?.string else { return nil }
             return Role(name: name,

@@ -1,6 +1,6 @@
 {
   "name": "VentesLegacy",
-  "compatibilityLevel": 1567,
+  "compatibilityLevel": 1702,
   "model": {
     "culture": "fr-FR",
     "dataAccessOptions": {
@@ -251,6 +251,22 @@
             "value": "Text"
           }
         ]
+      }
+    ],
+    "functions": [
+      {
+        "name": "Fiscalite.AppliquerTVA",
+        "description": "Applique un taux de TVA (20 % par défaut) à un montant hors taxes.",
+        "expression": [
+          "(montant : NUMERIC, taux : NUMERIC = 0.2) =>",
+          "\tmontant * ( 1 + taux )"
+        ],
+        "lineageTag": "3b0b6c1e-0000-4000-8000-000000000201"
+      },
+      {
+        "name": "MontantTTC",
+        "expression": "(montantHT : SCALAR NUMERIC VAL) =>\n\tROUND ( Fiscalite.AppliquerTVA ( montantHT ), 2 )",
+        "lineageTag": "3b0b6c1e-0000-4000-8000-000000000202"
       }
     ],
     "cultures": [

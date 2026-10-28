@@ -419,6 +419,100 @@ struct FolderDisclosure: View {
     }
 }
 
+// MARK: - Fonctions DAX
+
+/// Fonctions définies par l'utilisateur : paramètres, corps et objets du modèle qui les appellent.
+struct FunctionsView: View {
+    let semantic: SemanticModel
+    @State private var command: ExpansionCommand?
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text("Fonctions").font(.title).bold()
+                    Text("\(semantic.functions.count)").foregroundStyle(.secondary)
+                    Spacer()
+                    Button { command = ExpansionCommand(expanded: true, token: (command?.token ?? 0) + 1) } label: {
+                        Label("Tout déplier", systemImage: "chevron.down.circle")
+                    }
+                    Button { command = ExpansionCommand(expanded: false, token: (command?.token ?? 0) + 1) } label: {
+                        Label("Tout replier", systemImage: "chevron.right.circle")
+                    }
+                }
+                ForEach(semantic.functions, id: \.name) { f in
+                    FunctionCard(function: f, callers: semantic.callers(of: f.name))
+                }
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .environment(\.expansionCommand, command)
+    }
+}
+
+struct FunctionCard: View {
+    let function: UserFunction
+    let callers: [String]
+    @Environment(\.expansionCommand) private var command
+    @State private var expanded = true
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $expanded) {
+            VStack(alignment: .leading, spacing: 8) {
+                if let d = function.description {
+                    Text(d).foregroundStyle(.secondary)
+                }
+                if let signature = function.signature {
+                    if !signature.parameters.isEmpty {
+                        Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 16, verticalSpacing: 4) {
+                            GridRow {
+                                Text("Paramètre"); Text("Type"); Text("Par défaut")
+                            }
+                            .font(.caption.bold())
+                            .foregroundStyle(.secondary)
+                            ForEach(Array(signature.parameters.enumerated()), id: \.offset) { _, p in
+                                GridRow {
+                                    Text(p.name).font(.system(.callout, design: .monospaced))
+                                    Text(p.typeHint ?? "—").foregroundStyle(.secondary)
+                                    Text(p.defaultExpression ?? (p.typeHint == nil ? "" : "obligatoire"))
+                                        .font(.system(.callout, design: p.defaultExpression == nil ? .default : .monospaced))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    CodeView(code: signature.body, language: .dax)
+                } else {
+                    CodeView(code: function.expression, language: .dax)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(callers, id: \.self) { name in
+                        Label("appelée par \(name)", systemImage: "arrow.turn.up.left").font(.callout)
+                    }
+                }
+            }
+            .padding(.top, 6)
+        } label: {
+            HStack(spacing: 8) {
+                Text(signatureLabel).bold()
+                if function.isHidden { Tag("masquée") }
+                if callers.isEmpty { Tag("non appelée dans le modèle", color: .orange) }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { withAnimation { expanded.toggle() } }
+        }
+        .onAppear { if let command { expanded = command.expanded } }
+        .onChange(of: command) { if let c = $0 { withAnimation { expanded = c.expanded } } }
+    }
+
+    /// `Nom(a, b)`, ou le nom seul si l'expression n'a pas la forme attendue.
+    var signatureLabel: String {
+        guard let s = function.signature else { return function.name }
+        return "\(function.name)(\(s.parameters.map(\.name).joined(separator: ", ")))"
+    }
+}
+
 // MARK: - Pages et visuels
 
 struct PagesOverviewView: View {

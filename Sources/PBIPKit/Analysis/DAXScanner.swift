@@ -13,8 +13,20 @@ public struct DAXReference: Hashable, Sendable {
 /// une table nommée `t` : c'est à l'appelant d'ignorer les tables inconnues.
 public enum DAXScanner {
     public static func references(in expression: String) -> [DAXReference] {
+        scan(expression).references
+    }
+
+    /// Noms suivis d'une parenthèse ouvrante (`AppliquerTVA ( … )`, `Outils.Arrondir(…)`), dans
+    /// l'ordre, sans doublon : appels de fonctions, intégrées ou définies par l'utilisateur.
+    public static func calls(in expression: String) -> [String] {
+        var seen = Set<String>()
+        return scan(expression).calls.filter { seen.insert($0.lowercased()).inserted }
+    }
+
+    static func scan(_ expression: String) -> (references: [DAXReference], calls: [String]) {
         let chars = Array(expression)
         var refs: [DAXReference] = []
+        var calls: [String] = []
         var i = 0
         var lastTable: (name: String, end: Int)?
 
@@ -78,10 +90,13 @@ public enum DAXScanner {
                     i += 1
                 }
                 lastTable = (word, i)
+                var j = i
+                while j < chars.count, chars[j].isWhitespace { j += 1 }
+                if j < chars.count, chars[j] == "(" { calls.append(word) }
                 continue
             }
             i += 1
         }
-        return refs
+        return (refs, calls)
     }
 }

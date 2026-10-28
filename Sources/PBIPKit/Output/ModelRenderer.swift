@@ -18,6 +18,7 @@ public struct ModelRenderer {
             $0.from.table.caseInsensitiveCompare(table.name) == .orderedSame || $0.to.table.caseInsensitiveCompare(table.name) == .orderedSame
         }
         filtered.expressions = []
+        filtered.functions = []
         filtered.roles = model.roles.filter { role in
             role.tablePermissions.contains { $0.table.caseInsensitiveCompare(table.name) == .orderedSame }
         }
@@ -104,6 +105,15 @@ public struct ModelRenderer {
             }
             out.append("")
         }
+        if !model.functions.isEmpty {
+            out.append(style.bold("Functions"))
+            for f in model.functions {
+                out.append("  \(f.name)" + (f.isHidden ? style.dim("  hidden") : ""))
+                if let d = f.description { out.append(Format.indent(d, "    ")) }
+                out.append(Format.indent(f.expression, "    "))
+            }
+            out.append("")
+        }
         if !model.roles.isEmpty {
             out.append(style.bold("Roles"))
             for r in model.roles {
@@ -174,6 +184,14 @@ public struct ModelRenderer {
             out += ["## Expressions", ""]
             for e in model.expressions {
                 out += ["### \(e.name)\(e.isParameter ? " (parameter)" : "")", "", "```powerquery", e.expression, "```", ""]
+            }
+        }
+        if !model.functions.isEmpty {
+            out += ["## Functions", ""]
+            for f in model.functions {
+                out += ["### \(f.name)\(f.isHidden ? " (hidden)" : "")", ""]
+                if let d = f.description { out += [d, ""] }
+                out += ["```dax", f.expression, "```", ""]
             }
         }
         if !model.roles.isEmpty {

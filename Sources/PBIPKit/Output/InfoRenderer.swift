@@ -36,7 +36,12 @@ public struct InfoRenderer {
             rows.append(("Report content", "\(Format.plural(c.pages, "page")), \(Format.plural(c.visuals, "visual")), \(Format.plural(c.bookmarks, "bookmark"))"))
         }
         if s.semanticModelFormat != nil {
-            rows.append(("Model content", "\(Format.plural(c.tables, "table")), \(Format.plural(c.columns, "column")), \(Format.plural(c.measures, "measure")), \(Format.plural(c.relationships, "relationship")), \(Format.plural(c.expressions, "expression")), \(Format.plural(c.roles, "role"))"))
+            var content = [Format.plural(c.tables, "table"), Format.plural(c.columns, "column"), Format.plural(c.measures, "measure"),
+                           Format.plural(c.relationships, "relationship"), Format.plural(c.expressions, "expression")]
+            // Les fonctions ne sont citées que si le modèle en a (niveau de compatibilité 1702 ou plus).
+            if c.functions > 0 { content.append(Format.plural(c.functions, "function")) }
+            content.append(Format.plural(c.roles, "role"))
+            rows.append(("Model content", content.joined(separator: ", ")))
         }
         let d = s.diagnostics
         rows.append(("Diagnostics", "\(Format.plural(d.errors, "error")), \(Format.plural(d.warnings, "warning")), \(Format.plural(d.infos, "info"))"))

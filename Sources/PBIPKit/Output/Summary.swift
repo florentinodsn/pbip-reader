@@ -11,6 +11,7 @@ public struct ProjectSummary: Codable, Equatable, Sendable {
         public var measures = 0
         public var relationships = 0
         public var expressions = 0
+        public var functions = 0
         public var roles = 0
     }
 
@@ -53,6 +54,7 @@ public struct ProjectSummary: Codable, Equatable, Sendable {
             counts.measures = model.measureCount
             counts.relationships = model.relationships.count
             counts.expressions = model.expressions.count
+            counts.functions = model.functions.count
             counts.roles = model.roles.count
         }
         self.counts = counts

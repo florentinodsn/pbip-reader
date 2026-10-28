@@ -300,7 +300,7 @@ final class TMDLParserTests: XCTestCase {
         let project = try Fixtures.load("Ventes")
         XCTAssertEqual(project.diagnostics, [])
         let model = try XCTUnwrap(project.semanticModel)
-        XCTAssertEqual(model.compatibilityLevel, 1567)
+        XCTAssertEqual(model.compatibilityLevel, 1702)
         XCTAssertEqual(model.culture, "fr-FR")
         XCTAssertEqual(model.tables.map(\.name), ["Ventes", "Produits", "Calendrier"])
         XCTAssertEqual(model.measureCount, 5)
@@ -323,6 +323,24 @@ final class TMDLParserTests: XCTestCase {
         XCTAssertEqual(ventes.partitions.first?.expression?.components(separatedBy: "\n").first, "let")
         XCTAssertEqual(model.table(named: "Calendrier")?.partitions.first?.sourceKind, "calculated")
         XCTAssertEqual(model.expressions.first?.isParameter, true)
+
+        XCTAssertEqual(model.functions, [
+            UserFunction(name: "Fiscalite.AppliquerTVA",
+                         expression: "(montant : NUMERIC, taux : NUMERIC = 0.2) =>\n\tmontant * ( 1 + taux )",
+                         description: "Applique un taux de TVA (20 % par défaut) à un montant hors taxes."),
+            UserFunction(name: "MontantTTC",
+                         expression: "(montantHT : SCALAR NUMERIC VAL) =>\n\tROUND ( Fiscalite.AppliquerTVA ( montantHT ), 2 )"),
+        ])
+        XCTAssertEqual(model.callers(of: "fiscalite.appliquertva"), ["MontantTTC()"])
+        XCTAssertEqual(model.callers(of: "MontantTTC"), [])
+    }
+
+    func testFunctionAsInTheDocsTMDLView() {
+        // Forme de la doc « TMDL view » : description `///`, expression sur les lignes suivantes.
+        let (model, diagnostics) = build("/// AddTax takes in amount and returns amount including tax\nfunction AddTax = \n\t\t(amount : NUMERIC) =>\n\t\t\tamount * 1.1\n")
+        XCTAssertEqual(diagnostics, [])
+        XCTAssertEqual(model.functions, [UserFunction(name: "AddTax", expression: "(amount : NUMERIC) =>\n\tamount * 1.1",
+                                                      description: "AddTax takes in amount and returns amount including tax")])
     }
 
     func testRefCasseeFixtureReportsUnknownKeywordAndMissingRef() throws {

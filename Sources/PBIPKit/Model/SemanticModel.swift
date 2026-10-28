@@ -12,19 +12,22 @@ public struct SemanticModel: Codable, Equatable, Sendable {
     public var tables: [Table]
     public var relationships: [Relationship]
     public var expressions: [NamedExpression]
+    /// Fonctions DAX définies par l'utilisateur (`functions.tmdl`, niveau de compatibilité 1702 ou plus).
+    public var functions: [UserFunction]
     public var roles: [Role]
     public var cultures: [String]
     public var perspectives: [String]
 
     public init(format: Format, compatibilityLevel: Int? = nil, culture: String? = nil, tables: [Table] = [],
-                relationships: [Relationship] = [], expressions: [NamedExpression] = [], roles: [Role] = [],
-                cultures: [String] = [], perspectives: [String] = []) {
+                relationships: [Relationship] = [], expressions: [NamedExpression] = [], functions: [UserFunction] = [],
+                roles: [Role] = [], cultures: [String] = [], perspectives: [String] = []) {
         self.format = format
         self.compatibilityLevel = compatibilityLevel
         self.culture = culture
         self.tables = tables
         self.relationships = relationships
         self.expressions = expressions
+        self.functions = functions
         self.roles = roles
         self.cultures = cultures
         self.perspectives = perspectives
@@ -35,6 +38,27 @@ public struct SemanticModel: Codable, Equatable, Sendable {
     /// Les noms d'objets sont insensibles à la casse dans le moteur : on cherche de même.
     public func table(named name: String) -> Table? {
         tables.first { $0.name == name } ?? tables.first { $0.name.caseInsensitiveCompare(name) == .orderedSame }
+    }
+
+    public func function(named name: String) -> UserFunction? {
+        functions.first { $0.name == name } ?? functions.first { $0.name.caseInsensitiveCompare(name) == .orderedSame }
+    }
+
+    /// Objets dont le DAX appelle la fonction : mesures et colonnes calculées (`Table[Nom]`),
+    /// autres fonctions (`Nom()`).
+    public func callers(of function: String) -> [String] {
+        func calls(_ dax: String) -> Bool {
+            DAXScanner.calls(in: dax).contains { $0.caseInsensitiveCompare(function) == .orderedSame }
+        }
+        var result: [String] = []
+        for t in tables {
+            for m in t.measures where calls(m.expression) { result.append("\(t.name)[\(m.name)]") }
+            for c in t.columns where c.expression.map(calls) == true { result.append("\(t.name)[\(c.name)]") }
+        }
+        for f in functions where f.name.caseInsensitiveCompare(function) != .orderedSame && calls(f.expression) {
+            result.append("\(f.name)()")
+        }
+        return result
     }
 
     /// Le modèle sans les tables de date automatiques (option « Date/heure automatique » de Desktop),
@@ -218,6 +242,98 @@ public struct Relationship: Codable, Equatable, Sendable {
 
     /// `many:one`, `one:one`…
     public var cardinality: String { "\(fromCardinality):\(toCardinality)" }
+}
+
+/// Fonction DAX définie par l'utilisateur. `expression` contient les paramètres et le corps :
+/// `(montant : NUMERIC, taux : NUMERIC = 0.2) => montant * (1 + taux)`.
+public struct UserFunction: Codable, Equatable, Sendable {
+    public struct Parameter: Equatable, Sendable {
+        public var name: String
+        /// Indications de type telles qu'écrites (`NUMERIC`, `SCALAR INT64 VAL`, `ANYREF`…).
+        public var typeHint: String?
+        /// Expression par défaut d'un paramètre facultatif.
+        public var defaultExpression: String?
+    }
+
+    public var name: String
+    public var expression: String
+    public var description: String?
+    public var isHidden: Bool
+
+    public init(name: String, expression: String, description: String? = nil, isHidden: Bool = false) {
+        self.name = name
+        self.expression = expression
+        self.description = description
+        self.isHidden = isHidden
+    }
+
+    /// Paramètres et corps, ou `nil` si l'expression n'a pas la forme `( … ) => corps`.
+    public var signature: (parameters: [Parameter], body: String)? {
+        let chars = Array(expression)
+        var i = 0
+        func skipSpaces() { while i < chars.count, chars[i].isWhitespace { i += 1 } }
+        skipSpaces()
+        guard i < chars.count, chars[i] == "(" else { return nil }
+        i += 1
+
+        // Découpage aux virgules de premier niveau ; chaînes, noms entre apostrophes ou crochets
+        // et parenthèses imbriquées sont sautés.
+        var pieces: [String] = [], current = "", depth = 0
+        while i < chars.count {
+            let c = chars[i]
+            if c == "\"" || c == "'" || c == "[" {
+                let close: Character = c == "[" ? "]" : c
+                current.append(c)
+                i += 1
+                // Un délimiteur fermant doublé vaut un caractère (`""`, `''`, `]]`).
+                while i < chars.count {
+                    current.append(chars[i])
+                    if chars[i] == close {
+                        guard i + 1 < chars.count, chars[i + 1] == close else { break }
+                        i += 1
+                        current.append(chars[i])
+                    }
+                    i += 1
+                }
+            } else if c == "(" {
+                depth += 1
+                current.append(c)
+            } else if c == ")" {
+                if depth == 0 { break }
+                depth -= 1
+                current.append(c)
+            } else if c == "," && depth == 0 {
+                pieces.append(current)
+                current = ""
+            } else {
+                current.append(c)
+            }
+            i += 1
+        }
+        guard i < chars.count, chars[i] == ")" else { return nil }
+        i += 1
+        skipSpaces()
+        guard i + 1 < chars.count, chars[i] == "=", chars[i + 1] == ">" else { return nil }
+        let body = String(chars[(i + 2)...]).trimmingCharacters(in: .whitespacesAndNewlines)
+        if !current.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !pieces.isEmpty { pieces.append(current) }
+
+        let parameters = pieces.map { piece -> Parameter in
+            var rest = piece.trimmingCharacters(in: .whitespacesAndNewlines)
+            var defaultExpression: String?
+            if let eq = rest.firstIndex(of: "=") {
+                defaultExpression = rest[rest.index(after: eq)...].trimmingCharacters(in: .whitespacesAndNewlines)
+                rest = rest[..<eq].trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            var typeHint: String?
+            if let colon = rest.firstIndex(of: ":") {
+                let hint = rest[rest.index(after: colon)...].split(whereSeparator: \.isWhitespace).joined(separator: " ")
+                typeHint = hint.isEmpty ? nil : hint
+                rest = rest[..<colon].trimmingCharacters(in: .whitespacesAndNewlines)
+            }
+            return Parameter(name: rest, typeHint: typeHint, defaultExpression: defaultExpression)
+        }
+        return (parameters, body)
+    }
 }
 
 /// Expression partagée du modèle (requête M ou paramètre).

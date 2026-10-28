@@ -1,0 +1,10 @@
+/// Applique un taux de TVA (20 % par défaut) à un montant hors taxes.
+function Fiscalite.AppliquerTVA =
+		(montant : NUMERIC, taux : NUMERIC = 0.2) =>
+			montant * ( 1 + taux )
+	lineageTag: 3b0b6c1e-0000-4000-8000-000000000201
+
+function MontantTTC =
+		(montantHT : SCALAR NUMERIC VAL) =>
+			ROUND ( Fiscalite.AppliquerTVA ( montantHT ), 2 )
+	lineageTag: 3b0b6c1e-0000-4000-8000-000000000202

@@ -26,7 +26,7 @@ La spécification de travail (format, sources, incertitudes, écarts) est dans `
 
 ```bash
 swift build
-swift test                                     # 82 tests XCTest
+swift test                                     # 86 tests XCTest
 PBIP_RECORD_SNAPSHOTS=1 swift test             # réécrit Tests/Snapshots après un changement voulu
 swift run pbip info Tests/Fixtures/Ventes      # CLI : info | model | report | lineage | validate
 swift run pbip-reader-app -project Tests/Fixtures/Ventes/Ventes.pbip   # app SwiftUI
@@ -87,5 +87,6 @@ Dans `Sources/PBIPKit/` :
 ## Points ouverts
 
 - Titulaire de la licence : `florentinodsn` par défaut, nom complet possible.
-- `functions.tmdl` (UDF DAX) lu mais non exposé dans le modèle objet.
+- Fonctions DAX : forme TMSL (`model.functions`) supposée, à confirmer ; références des fonctions
+  absentes du lignage.
 - Message `model.unusedMeasure` bruyant sur un modèle partagé par plusieurs rapports (relatif au rapport lu).

@@ -182,8 +182,17 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
   `byPath` est suivi quel que soit le suffixe.
 - **`definition.pbidataset`.** Ces mêmes anciens dossiers `.Dataset` contiennent `definition.pbidataset`
   au lieu de `definition.pbism` (absent de la doc actuelle). Il est accepté, avec un diagnostic `info`.
-- **`functions.tmdl` (UDF DAX)** : listé par la doc ; lu comme nœud `function`, non exposé dans
-  le modèle objet pour l'instant.
+- **Fonctions DAX définies par l'utilisateur** (`functions.tmdl`, niveau de compatibilité 1702 ou
+  plus) : lues dans `SemanticModel.functions` (nom, expression, description `///`, `isHidden`),
+  d'après la doc « Use DAX user-defined functions » et la classe `Function` du modèle tabulaire.
+  `expression` contient les paramètres et le corps (`( a : NUMERIC = 1 ) => …`) ; la signature est
+  découpée à l'affichage, sans valider les indications de type.
+  - **Incertitude `model.bim`** : la doc ne montre pas d'exemple TMSL. Lecture d'un tableau
+    `model.functions` (`name`, `expression` en chaîne ou en lignes, `description`, `isHidden`),
+    sur le modèle des autres collections. À confirmer.
+  - Les appels sont repérés par balayage lexical (nom suivi de `(`), hors chaînes et commentaires.
+    Les références d'une fonction aux mesures ne comptent pas encore dans le lignage :
+    `model.unusedMeasure` peut signaler une mesure appelée seulement depuis une fonction.
 - **Nom du modèle publié** : la doc montre deux formes de chaîne de connexion ; l'extraction de
   `initial catalog` est une heuristique.
 - **Écart avec le prompt (contrainte « salle blanche »)** : en plus des fichiers fictifs, la

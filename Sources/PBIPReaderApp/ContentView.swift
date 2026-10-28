@@ -91,6 +91,11 @@ struct Sidebar: View {
                         Label("Mesures", systemImage: "sum")
                             .badge(semantic.measureCount)
                             .tag(SidebarItem.measures)
+                        if !semantic.functions.isEmpty {
+                            Label("Fonctions", systemImage: "function")
+                                .badge(semantic.functions.count)
+                                .tag(SidebarItem.functions)
+                        }
                         Label("Relations", systemImage: "arrow.triangle.branch")
                             .badge(semantic.relationships.count)
                             .tag(SidebarItem.relationships)
@@ -164,6 +169,10 @@ struct Detail: View {
         case .measures?:
             if let semantic = model.visibleModel {
                 AllMeasuresView(semantic: semantic)
+            }
+        case .functions?:
+            if let semantic = model.visibleModel {
+                FunctionsView(semantic: semantic)
             }
         case .pagesOverview?:
             if let report = model.project?.report {

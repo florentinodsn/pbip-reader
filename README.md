@@ -34,7 +34,7 @@ cp .build/release/pbip /usr/local/bin/
 
 ```
 pbip info     <chemin.pbip|dossier>   résumé : formats, pages, visuels, tables, mesures, relations
-pbip model    <chemin> [--table X]    tables, colonnes, mesures (avec DAX), relations, requêtes M
+pbip model    <chemin> [--table X]    tables, colonnes, mesures (avec DAX), relations, requêtes M, fonctions DAX
 pbip report   <chemin> [--page X]     pages et visuels, avec les champs utilisés
 pbip lineage  <chemin> [--measure X]  qui utilise quoi, dans les deux sens
 pbip validate <chemin>                diagnostics ; code de sortie ≠ 0 en cas d'erreur
@@ -56,9 +56,16 @@ Codes de sortie : `0` succès, `1` erreurs de validation (`pbip validate`), `2` 
 
 ## Application macOS
 
-Une application SwiftUI en lecture seule accompagne la CLI : barre latérale *Modèle / Rapport /
-Diagnostics*, détail des tables et des mesures (DAX coloré, usages dans le rapport), requêtes M,
-relations, et aperçu schématique de chaque page à partir des positions des visuels.
+Une application SwiftUI en lecture seule accompagne la CLI :
+
+- vue d'ensemble : diagramme du modèle (dispositions « Ranger » et « Étoile / flocon », détail d'une
+  relation au survol), toutes les mesures par dossier d'affichage, fonctions DAX, relations
+  filtrables par table ou par colonne, pages et visuels ;
+- détail des tables et des mesures (DAX coloré, usages dans le rapport), requêtes M ;
+- aperçu schématique de chaque page à partir des positions des visuels ;
+- diagnostics filtrables par gravité.
+
+Les tables de date automatiques (`LocalDateTable_…`, `DateTableTemplate_…`) y sont masquées.
 
 ```bash
 swift run pbip-reader-app -project chemin/vers/MonRapport.pbip   # lancement direct

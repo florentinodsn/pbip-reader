@@ -76,6 +76,11 @@ public struct TMDLModelBuilder {
                 model.expressions.append(NamedExpression(
                     name: name, kind: node.property("kind") ?? "m",
                     expression: node.defaultValue ?? "", description: node.description))
+            case "function":
+                guard let name = node.name else { return }
+                model.functions.append(UserFunction(
+                    name: name, expression: node.defaultValue ?? node.property("expression") ?? "",
+                    description: node.description, isHidden: node.flag("isHidden") ?? false))
             case "role":
                 guard let name = node.name else { return }
                 model.roles.append(Role(

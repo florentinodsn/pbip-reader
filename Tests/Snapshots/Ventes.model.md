@@ -136,6 +136,24 @@ ADDCOLUMNS(
 "/exemple/donnees" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 ```
 
+## Functions
+
+### Fiscalite.AppliquerTVA
+
+Applique un taux de TVA (20 % par défaut) à un montant hors taxes.
+
+```dax
+(montant : NUMERIC, taux : NUMERIC = 0.2) =>
+	montant * ( 1 + taux )
+```
+
+### MontantTTC
+
+```dax
+(montantHT : SCALAR NUMERIC VAL) =>
+	ROUND ( Fiscalite.AppliquerTVA ( montantHT ), 2 )
+```
+
 ## Roles
 
 - **Lecteurs France** (read)

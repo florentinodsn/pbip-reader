@@ -6,6 +6,7 @@ import PBIPKit
 enum SidebarItem: Hashable {
     case diagram
     case measures
+    case functions
     case pagesOverview
     case table(String)
     case relationships
@@ -68,6 +69,7 @@ final class AppModel: ObservableObject {
         case .table(let name): return visibleModel?.table(named: name) != nil
         case .page(let id): return project?.report?.pages.contains { $0.id == id } == true
         case .diagram, .measures, .relationships, .expressions: return project?.semanticModel != nil
+        case .functions: return visibleModel?.functions.isEmpty == false
         case .pagesOverview: return project?.report != nil
         case .diagnostics: return true
         }
