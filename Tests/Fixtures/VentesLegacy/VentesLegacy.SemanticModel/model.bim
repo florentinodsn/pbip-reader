@@ -1,0 +1,275 @@
+{
+  "name": "VentesLegacy",
+  "compatibilityLevel": 1567,
+  "model": {
+    "culture": "fr-FR",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "fr-FR",
+    "tables": [
+      {
+        "name": "Ventes",
+        "description": "Lignes de vente fictives.",
+        "lineageTag": "3b0b6c1e-0000-4000-8000-000000000001",
+        "columns": [
+          {
+            "name": "Date",
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "sourceColumn": "Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Code Produit",
+            "dataType": "string",
+            "sourceColumn": "Code Produit",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Quantité",
+            "dataType": "int64",
+            "formatString": "0",
+            "sourceColumn": "Quantité",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Prix unitaire",
+            "dataType": "decimal",
+            "formatString": "0.00 \"€\"",
+            "sourceColumn": "Prix unitaire",
+            "summarizeBy": "none"
+          },
+          {
+            "type": "calculated",
+            "name": "Montant HT",
+            "dataType": "decimal",
+            "isHidden": true,
+            "expression": "Ventes[Quantité] * Ventes[Prix unitaire]",
+            "formatString": "#,##0.00 €",
+            "summarizeBy": "sum"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Ventes",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "\tSource = Csv.Document(File.Contents(#\"Dossier source\" & \"/ventes.csv\"), [Delimiter=\";\", Encoding=65001]),",
+                "\tTypé = Table.TransformColumnTypes(Source, {{\"Quantité\", Int64.Type}})",
+                "in",
+                "\tTypé"
+              ]
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Total HT",
+            "expression": "SUM(Ventes[Montant HT])",
+            "formatString": "#,##0.00 €",
+            "description": "Chiffre d'affaires hors taxes."
+          },
+          {
+            "name": "Quantité vendue",
+            "expression": "SUM(Ventes[Quantité])",
+            "formatString": "0"
+          },
+          {
+            "name": "Panier moyen",
+            "expression": [
+              "",
+              "VAR nb = DISTINCTCOUNT(Ventes[Date])",
+              "RETURN",
+              "\tDIVIDE([Total HT], nb)"
+            ],
+            "formatString": "#,##0.00 €",
+            "displayFolder": "Indicateurs"
+          },
+          {
+            "name": "Total HT N-1",
+            "expression": [
+              "CALCULATE(",
+              "\t[Total HT],",
+              "\tSAMEPERIODLASTYEAR('Calendrier'[Date])",
+              ")"
+            ],
+            "formatString": "#,##0.00 €"
+          },
+          {
+            "name": "Marge %",
+            "expression": "DIVIDE([Total HT] - SUMX(Ventes, Ventes[Quantité] * Ventes[Prix unitaire] * 0.6), [Total HT])",
+            "formatString": "0.0 %",
+            "displayFolder": "Indicateurs",
+            "description": "Marge estimée, coût fictif à 60 % du prix.\nSert d'exemple de description sur deux lignes."
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "Produits",
+        "columns": [
+          {
+            "name": "Code Produit",
+            "dataType": "string",
+            "isKey": true,
+            "sourceColumn": "Code Produit",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Libellé",
+            "dataType": "string",
+            "sourceColumn": "Libellé",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Catégorie",
+            "dataType": "string",
+            "sourceColumn": "Catégorie",
+            "summarizeBy": "none"
+          }
+        ],
+        "hierarchies": [
+          {
+            "name": "Gamme",
+            "levels": [
+              {
+                "name": "Catégorie",
+                "ordinal": 0,
+                "column": "Catégorie"
+              },
+              {
+                "name": "Libellé",
+                "ordinal": 1,
+                "column": "Libellé"
+              }
+            ]
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Produits",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "\tSource = Csv.Document(File.Contents(#\"Dossier source\" & \"/produits.csv\"), [Delimiter=\";\", Encoding=65001])",
+                "in",
+                "\tSource"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Calendrier",
+        "columns": [
+          {
+            "type": "calculatedTableColumn",
+            "name": "Date",
+            "dataType": "dateTime",
+            "isNameInferred": true,
+            "formatString": "General Date",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none"
+          },
+          {
+            "type": "calculatedTableColumn",
+            "name": "Année",
+            "dataType": "int64",
+            "isNameInferred": true,
+            "formatString": "0",
+            "sourceColumn": "[Année]",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Calendrier",
+            "mode": "import",
+            "source": {
+              "type": "calculated",
+              "expression": [
+                "ADDCOLUMNS(",
+                "\tCALENDAR(DATE(2024, 1, 1), DATE(2025, 12, 31)),",
+                "\t\"Année\", YEAR([Date])",
+                ")"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "7a3c1e52-0000-4000-8000-000000000001",
+        "fromTable": "Ventes",
+        "fromColumn": "Code Produit",
+        "toTable": "Produits",
+        "toColumn": "Code Produit",
+        "crossFilteringBehavior": "bothDirections"
+      },
+      {
+        "name": "7a3c1e52-0000-4000-8000-000000000002",
+        "fromTable": "Ventes",
+        "fromColumn": "Date",
+        "toTable": "Calendrier",
+        "toColumn": "Date"
+      }
+    ],
+    "roles": [
+      {
+        "name": "Lecteurs France",
+        "modelPermission": "read",
+        "tablePermissions": [
+          {
+            "name": "Produits",
+            "filterExpression": "Produits[Catégorie] <> \"Interne\""
+          }
+        ]
+      }
+    ],
+    "expressions": [
+      {
+        "name": "Dossier source",
+        "kind": "m",
+        "expression": "\"/exemple/donnees\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ]
+      }
+    ],
+    "cultures": [
+      {
+        "name": "fr-FR",
+        "linguisticMetadata": {
+          "content": {
+            "Version": "1.0.0",
+            "Language": "fr-FR"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Dossier source\",\"Ventes\",\"Produits\"]"
+      }
+    ]
+  }
+}

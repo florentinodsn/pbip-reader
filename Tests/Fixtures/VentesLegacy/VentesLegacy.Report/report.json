@@ -1,0 +1,86 @@
+{
+  "config": "{\"version\": \"5.61\", \"themeCollection\": {\"baseTheme\": {\"name\": \"CY24SU10\", \"version\": \"5.61\", \"type\": 2}}, \"activeSectionIndex\": 0, \"bookmarks\": [{\"displayName\": \"Vue 2025\", \"name\": \"e3000000000000000001\", \"explorationState\": {\"version\": \"1.3\"}}]}",
+  "filters": "[{\"name\": \"f0000000000000000001\", \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Calendrier\"}}, \"Property\": \"Année\"}}, \"type\": \"Categorical\", \"howCreated\": 1}]",
+  "layoutOptimization": 0,
+  "resourcePackages": [],
+  "sections": [
+    {
+      "name": "a1c3e5f7a9b1c3e5f7a9",
+      "displayName": "Synthèse",
+      "ordinal": 0,
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720,
+      "config": "{}",
+      "filters": "[]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 280,
+          "height": 120,
+          "config": "{\"name\": \"c1000000000000000001\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 280, \"height\": 120, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Ventes.Total HT\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"v\", \"Entity\": \"Ventes\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Total HT\"}, \"Name\": \"Ventes.Total HT\", \"NativeReferenceName\": \"Total HT\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Chiffre d''affaires HT'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 320,
+          "y": 20,
+          "z": 1000,
+          "width": 280,
+          "height": 120,
+          "config": "{\"name\": \"c1000000000000000002\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 320, \"y\": 20, \"z\": 1000, \"width\": 280, \"height\": 120, \"tabOrder\": 1000}}], \"singleVisual\": {\"visualType\": \"card\", \"projections\": {\"Values\": [{\"queryRef\": \"Ventes.Quantité vendue\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"v\", \"Entity\": \"Ventes\", \"Type\": 0}], \"Select\": [{\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Quantité vendue\"}, \"Name\": \"Ventes.Quantité vendue\", \"NativeReferenceName\": \"Quantité vendue\"}]}, \"drillFilterOtherVisuals\": true}}",
+          "filters": "[]"
+        },
+        {
+          "x": 20,
+          "y": 160,
+          "z": 2000,
+          "width": 900,
+          "height": 400,
+          "config": "{\"name\": \"c1000000000000000003\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 160, \"z\": 2000, \"width\": 900, \"height\": 400, \"tabOrder\": 2000}}], \"singleVisual\": {\"visualType\": \"lineChart\", \"projections\": {\"Category\": [{\"queryRef\": \"Calendrier.Année\"}], \"Y\": [{\"queryRef\": \"Ventes.Total HT\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"c\", \"Entity\": \"Calendrier\", \"Type\": 0}, {\"Name\": \"v\", \"Entity\": \"Ventes\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"c\"}}, \"Property\": \"Année\"}, \"Name\": \"Calendrier.Année\", \"NativeReferenceName\": \"Année\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Total HT\"}, \"Name\": \"Ventes.Total HT\", \"NativeReferenceName\": \"Total HT\"}], \"OrderBy\": [{\"Direction\": 1, \"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"c\"}}, \"Property\": \"Année\"}}}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Évolution du CA'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 940,
+          "y": 160,
+          "z": 3000,
+          "width": 300,
+          "height": 400,
+          "config": "{\"name\": \"c1000000000000000004\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 940, \"y\": 160, \"z\": 3000, \"width\": 300, \"height\": 400, \"tabOrder\": 3000}}], \"singleVisual\": {\"visualType\": \"slicer\", \"projections\": {\"Values\": [{\"queryRef\": \"Calendrier.Année\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"c\", \"Entity\": \"Calendrier\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"c\"}}, \"Property\": \"Année\"}, \"Name\": \"Calendrier.Année\", \"NativeReferenceName\": \"Année\"}]}, \"drillFilterOtherVisuals\": true}}",
+          "filters": "[]"
+        }
+      ]
+    },
+    {
+      "name": "b2d4f6a8b0c2d4f6a8b0",
+      "displayName": "Détail produits",
+      "ordinal": 1,
+      "displayOption": 1,
+      "width": 1280,
+      "height": 720,
+      "config": "{}",
+      "filters": "[{\"name\": \"fb2d4f6a8b0c2d4f6a8b\", \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Produits\"}}, \"Property\": \"Catégorie\"}}, \"type\": \"Categorical\", \"howCreated\": 1}]",
+      "visualContainers": [
+        {
+          "x": 20,
+          "y": 20,
+          "z": 0,
+          "width": 600,
+          "height": 600,
+          "config": "{\"name\": \"d2000000000000000001\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 20, \"y\": 20, \"z\": 0, \"width\": 600, \"height\": 600, \"tabOrder\": 0}}], \"singleVisual\": {\"visualType\": \"tableEx\", \"projections\": {\"Values\": [{\"queryRef\": \"Produits.Libellé\"}, {\"queryRef\": \"Sum(Ventes.Quantité)\"}, {\"queryRef\": \"Ventes.Panier moyen\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"p\", \"Entity\": \"Produits\", \"Type\": 0}, {\"Name\": \"v\", \"Entity\": \"Ventes\", \"Type\": 0}], \"Select\": [{\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"p\"}}, \"Property\": \"Libellé\"}, \"Name\": \"Produits.Libellé\", \"NativeReferenceName\": \"Libellé\"}, {\"Aggregation\": {\"Expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Quantité\"}}, \"Function\": 0}, \"Name\": \"Sum(Ventes.Quantité)\", \"NativeReferenceName\": \"Quantité\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Panier moyen\"}, \"Name\": \"Ventes.Panier moyen\", \"NativeReferenceName\": \"Panier moyen\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Ventes par produit'\"}}}}}]}}}",
+          "filters": "[]"
+        },
+        {
+          "x": 640,
+          "y": 20,
+          "z": 1000,
+          "width": 600,
+          "height": 600,
+          "config": "{\"name\": \"d2000000000000000002\", \"layouts\": [{\"id\": 0, \"position\": {\"x\": 640, \"y\": 20, \"z\": 1000, \"width\": 600, \"height\": 600, \"tabOrder\": 1000}}], \"singleVisual\": {\"visualType\": \"clusteredBarChart\", \"projections\": {\"Category\": [{\"queryRef\": \"Produits.Gamme.Catégorie\"}], \"Y\": [{\"queryRef\": \"Ventes.Marge %\"}]}, \"prototypeQuery\": {\"Version\": 2, \"From\": [{\"Name\": \"p\", \"Entity\": \"Produits\", \"Type\": 0}, {\"Name\": \"v\", \"Entity\": \"Ventes\", \"Type\": 0}], \"Select\": [{\"HierarchyLevel\": {\"Expression\": {\"Hierarchy\": {\"Expression\": {\"SourceRef\": {\"Source\": \"p\"}}, \"Hierarchy\": \"Gamme\"}}, \"Level\": \"Catégorie\"}, \"Name\": \"Produits.Gamme.Catégorie\", \"NativeReferenceName\": \"Catégorie\"}, {\"Measure\": {\"Expression\": {\"SourceRef\": {\"Source\": \"v\"}}, \"Property\": \"Marge %\"}, \"Name\": \"Ventes.Marge %\", \"NativeReferenceName\": \"Marge %\"}]}, \"drillFilterOtherVisuals\": true, \"vcObjects\": {\"title\": [{\"properties\": {\"text\": {\"expr\": {\"Literal\": {\"Value\": \"'Marge par catégorie'\"}}}}}]}}}",
+          "filters": "[{\"name\": \"gd200000000000000000\", \"expression\": {\"Column\": {\"Expression\": {\"SourceRef\": {\"Entity\": \"Produits\"}}, \"Property\": \"Catégorie\"}}, \"type\": \"Categorical\", \"howCreated\": 1}]"
+        }
+      ]
+    }
+  ]
+}

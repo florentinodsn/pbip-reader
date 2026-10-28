@@ -1,0 +1,8 @@
+relationship 7a3c1e52-0000-4000-8000-000000000001
+	crossFilteringBehavior: bothDirections
+	fromColumn: Ventes.'Code Produit'
+	toColumn: Produits.'Code Produit'
+
+relationship 7a3c1e52-0000-4000-8000-000000000002
+	fromColumn: 'Ventes'.'Date'
+	toColumn: Calendrier.Date

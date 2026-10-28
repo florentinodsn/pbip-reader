@@ -1,0 +1,28 @@
+table Calendrier
+	lineageTag: 3b0b6c1e-0000-4000-8000-000000000030
+
+	column Date
+		dataType: dateTime
+		isNameInferred
+		formatString: General Date
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000031
+		summarizeBy: none
+		sourceColumn: [Date]
+
+	column Année
+		dataType: int64
+		isNameInferred
+		formatString: 0
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000032
+		summarizeBy: none
+		sourceColumn: [Année]
+
+	partition Calendrier = calculated
+		mode: import
+		source =
+			ADDCOLUMNS(
+				CALENDAR(DATE(2024, 1, 1), DATE(2025, 12, 31)),
+				"Année", YEAR([Date])
+			)
+
+	annotation PBI_Id = 0f0f0f0f000040008000000000000001

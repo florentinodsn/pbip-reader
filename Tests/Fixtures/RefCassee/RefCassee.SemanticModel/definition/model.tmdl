@@ -1,0 +1,5 @@
+model Model
+	culture: fr-FR
+
+ref table Ventes
+ref table Absente

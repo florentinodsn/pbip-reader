@@ -1,0 +1,24 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/reportExtension/1.0.0/schema.json",
+  "name": "extension",
+  "entities": [
+    {
+      "name": "Ventes",
+      "measures": [
+        {
+          "name": "Total HT x2",
+          "dataType": "Double",
+          "expression": "[Total HT] * 2",
+          "references": {
+            "measures": [
+              {
+                "entity": "Ventes",
+                "name": "Total HT"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Dossier source","Ventes","Produits"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+ref table Ventes
+ref table Produits
+ref table Calendrier
+
+ref cultureInfo fr-FR

@@ -1,0 +1,3 @@
+relationship r1
+	fromColumn: Ventes.'Code Client'
+	toColumn: Clients.Code

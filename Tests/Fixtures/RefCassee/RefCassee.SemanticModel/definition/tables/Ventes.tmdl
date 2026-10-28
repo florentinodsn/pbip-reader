@@ -1,0 +1,16 @@
+table Ventes
+
+	measure Total = SUM(Ventes[Montant])
+
+	measure 'Total orphelin' = [Total] * 2
+
+	column Date
+		dataType: dateTime
+		sourceColumn: Date
+
+	column Montant
+		dataType: decimal
+		sourceColumn: Montant
+
+	gadget Inconnu
+		couleur: bleu

@@ -1,0 +1,5 @@
+table Ventes
+
+	column Date
+		dataType: dateTime
+		sourceColumn: Date

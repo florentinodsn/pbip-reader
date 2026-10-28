@@ -1,0 +1,81 @@
+/// Lignes de vente fictives.
+table Ventes
+	lineageTag: 3b0b6c1e-0000-4000-8000-000000000001
+
+	/// Chiffre d'affaires hors taxes.
+	measure 'Total HT' = SUM(Ventes[Montant HT])
+		formatString: #,##0.00 €
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000002
+
+	measure 'Quantité vendue' = SUM(Ventes[Quantité])
+		formatString: 0
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000003
+
+	measure 'Panier moyen' =
+			VAR nb = DISTINCTCOUNT(Ventes[Date])
+			RETURN
+				DIVIDE([Total HT], nb)
+		formatString: #,##0.00 €
+		displayFolder: Indicateurs
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000004
+
+	measure 'Total HT N-1' = ```
+			CALCULATE(
+				[Total HT],
+				SAMEPERIODLASTYEAR('Calendrier'[Date])
+			)
+			```
+		formatString: #,##0.00 €
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000005
+
+	/// Marge estimée, coût fictif à 60 % du prix.
+	/// Sert d'exemple de description sur deux lignes.
+	measure 'Marge %' = DIVIDE([Total HT] - SUMX(Ventes, Ventes[Quantité] * Ventes[Prix unitaire] * 0.6), [Total HT])
+		formatString: 0.0 %
+		displayFolder: Indicateurs
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000006
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000007
+		summarizeBy: none
+		sourceColumn: Date
+
+	column 'Code Produit'
+		dataType: string
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000008
+		summarizeBy: none
+		sourceColumn: Code Produit
+
+	column Quantité
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000009
+		summarizeBy: sum
+		sourceColumn: Quantité
+
+	column 'Prix unitaire'
+		dataType: decimal
+		formatString: "0.00 ""€"""
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000010
+		summarizeBy: none
+		sourceColumn: Prix unitaire
+
+	column 'Montant HT' = Ventes[Quantité] * Ventes[Prix unitaire]
+		dataType: decimal
+		isHidden
+		formatString: #,##0.00 €
+		lineageTag: 3b0b6c1e-0000-4000-8000-000000000011
+		summarizeBy: sum
+
+	partition Ventes = m
+		mode: import
+		source =
+			let
+				Source = Csv.Document(File.Contents(#"Dossier source" & "/ventes.csv"), [Delimiter=";", Encoding=65001]),
+				Typé = Table.TransformColumnTypes(Source, {{"Quantité", Int64.Type}})
+			in
+				Typé
+
+	annotation PBI_ResultType = Table
