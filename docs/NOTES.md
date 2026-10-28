@@ -171,6 +171,11 @@ La déclaration peut être **partielle** : un objet peut être réparti sur plus
   pagesMetadata 1.x, visualContainer ≤ 2.x, versionMetadata 1.x, bookmark ≤ 2.x,
   definitionProperties (rapport) ≤ 2.x, definitionProperties (modèle) 1.x, pbipProperties 1.x.
   Une version majeure supérieure produit un avertissement, pas une erreur.
+- **JSON tolérant.** `JSONSerialization` (Foundation récente) accepte des écarts comme une virgule
+  finale. Le lecteur n'est donc pas un validateur de schéma : un fichier accepté ici peut être
+  refusé par Desktop.
+- **Forme de `bookmarks.json`** : non vérifiée en détail ; on accepte une chaîne, un objet `name`
+  ou un groupe `children`.
 - **Dossier `.Dataset`.** Les anciens projets nomment le dossier du modèle `<Nom>.Dataset`. Le
   `byPath` est suivi quel que soit le suffixe.
 - **`definition.pbidataset`.** Ces mêmes anciens dossiers `.Dataset` contiennent `definition.pbidataset`
